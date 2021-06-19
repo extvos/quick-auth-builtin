@@ -1,7 +1,11 @@
 package org.extvos.auth.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.extvos.auth.entity.Permission;
 import org.extvos.auth.entity.Role;
 import org.extvos.auth.entity.User;
+import org.extvos.auth.mapper.PermissionMapper;
+import org.extvos.auth.mapper.RoleMapper;
 import org.extvos.auth.service.UserService;
 import org.extvos.auth.utils.CredentialHash;
 import org.extvos.restlet.QuerySet;
@@ -22,7 +26,7 @@ import java.util.List;
  *
  * @author Mingcai SHEN
  */
-@Api(tags = {"用户操作"})
+@Api(tags = {"用户管理"})
 @RestController
 @RequestMapping("/_builtin/auth/user")
 @RequiresPermissions(value = {"*", "admin", "administration"}, logical = Logical.OR)
@@ -30,6 +34,12 @@ public class UserController extends BaseController<User, UserService> {
 
     @Autowired
     private UserService myService;
+
+    @Autowired
+    private PermissionMapper permissionMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Override
     public UserService getService() {
@@ -59,6 +69,12 @@ public class UserController extends BaseController<User, UserService> {
 
     @Override
     public User postSelect(User entity) throws RestletException {
+        QueryWrapper<Permission> qw1 = new QueryWrapper<>();
+        qw1.inSql("id", "SELECT permission_id FROM builtin_user_permissions WHERE user_id = " + entity.getId());
+        entity.setPermissions(permissionMapper.selectList(qw1).toArray(new Permission[0]));
+        QueryWrapper<Role> qw2 = new QueryWrapper<>();
+        qw2.inSql("id", "SELECT role_id FROM builtin_user_roles WHERE user_id = " + entity.getId());
+        entity.setRoles(roleMapper.selectList(qw2).toArray(new Role[0]));
         return super.postSelect(entity);
     }
 

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.sql.Timestamp;
@@ -28,11 +27,6 @@ public class User {
      * username / 用户名
      */
     private String username;
-
-    /**
-     * cellphone / 手机号码
-     */
-    private String cellphone;
 
     /**
      * password / 密码
@@ -67,7 +61,7 @@ public class User {
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(exist = false)
-    private String[] roleIds;
+    private Integer[] roleIds;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(exist = false)
@@ -78,7 +72,7 @@ public class User {
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(exist = false)
-    private String[] permissionIds;
+    private Integer[] permissionIds;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(exist = false)
@@ -98,14 +92,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getCellphone() {
-        return cellphone;
-    }
-
-    public void setCellphone(String cellphone) {
-        this.cellphone = cellphone;
     }
 
     public String getPassword() {
@@ -148,11 +134,11 @@ public class User {
         this.updated = updated;
     }
 
-    public String[] getRoleIds() {
+    public Integer[] getRoleIds() {
         return roleIds;
     }
 
-    public void setRoleIds(String[] roleIds) {
+    public void setRoleIds(Integer[] roleIds) {
         this.roleIds = roleIds;
     }
 
@@ -164,11 +150,11 @@ public class User {
         this.roles = roles;
     }
 
-    public String[] getPermissionIds() {
+    public Integer[] getPermissionIds() {
         return permissionIds;
     }
 
-    public void setPermissionIds(String[] permissionIds) {
+    public void setPermissionIds(Integer[] permissionIds) {
         this.permissionIds = permissionIds;
     }
 
@@ -180,10 +166,9 @@ public class User {
         this.permissions = permissions;
     }
 
-    public User(Long id, String username, String cellphone, String password, String nickname, Short status, Timestamp created, Timestamp updated) {
+    public User(Long id, String username, String password, String nickname, Short status, Timestamp created, Timestamp updated) {
         this.id = id;
         this.username = username;
-        this.cellphone = cellphone;
         this.password = password;
         this.nickname = nickname;
         this.status = status;

@@ -55,7 +55,7 @@ public class Role {
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(exist = false)
-    private String[] permissionIds;
+    private Integer[] permissionIds;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(exist = false)
@@ -109,11 +109,11 @@ public class Role {
         this.updated = updated;
     }
 
-    public String[] getPermissionIds() {
+    public Integer[] getPermissionIds() {
         return permissionIds;
     }
 
-    public void setPermissionIds(String[] permissionIds) {
+    public void setPermissionIds(Integer[] permissionIds) {
         this.permissionIds = permissionIds;
     }
 

@@ -4,7 +4,24 @@
 
 模块在加载的时候自动创建数据库。
 
-
+## 注意事项
+###    1. pom.xml必须引入 mybatis-plus-boot-starter，单独引入mybatis 或者 mybatis-plus 启动不报错，但是调用到
+###         quick-auth-builtin包内的 mapper 时，报invalid bound statement 
+###    2. 然后在 yml文件中增加 mybatis-plus.mapper-locations 的配置
+```xml
+<dependency>
+    <groupId>com.baomidou</groupId>
+    <artifactId>mybatis-plus-boot-starter</artifactId>
+    <version>3.4.3</version>
+</dependency>
+```
+```yaml
+mybatis-plus:
+  # 映射文件所在路径
+  mapper-locations: classpath*:mapper/**/*.xml
+  # 项目 pojo类所在包路径
+  type-aliases-package: org.extvos.auth.entity #
+```
 
 ## 数据表
 
@@ -14,18 +31,29 @@
 CREATE TABLE IF NOT EXISTS `builtin_users` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `username` varchar(32) NOT NULL COMMENT '用户名',
-  `cellphone` varchar(32) NOT NULL COMMENT '手机号码',
   `password` varchar(64) NOT NULL COMMENT '密码',
   `nickname` varchar(64) NOT NULL COMMENT '昵称',
   `status` smallint(6) NOT NULL DEFAULT '0' COMMENT '状态: 0 = 注册, 1: 激活, -1: 锁定',
   `created` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updated` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `cellphone` (`cellphone`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='用户数据表';
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE utf8_unicode_ci COMMENT='用户数据表';
 ```
 
+### `UserCellphone` 用户手机号表
+
+```sql
+CREATE TABLE IF NOT EXISTS `builtin_user_cellphones` (
+	`id` BIGINT(20) NOT NULL COMMENT '用户ID',
+    `cellphone` varchar(32) NOT NULL COMMENT '手机号码',
+	`created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`updated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE INDEX `cellphone` (`cellphone`) USING BTREE,
+	CONSTRAINT `builtin_user_cellphones_ibfk_1` FOREIGN KEY (`id`) REFERENCES `builtin_users` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户手机关联账号';
+```
 
 
 ### `UserWechatAccount` 用户微信账号表
@@ -45,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `builtin_user_wechat_accounts` (
 	PRIMARY KEY (`id`) USING BTREE,
 	UNIQUE INDEX `open_id` (`open_id`) USING BTREE,
 	CONSTRAINT `builtin_user_wechat_accounts_ibfk_1` FOREIGN KEY (`id`) REFERENCES `builtin_users` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
-)  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户微信关联账号';
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8_unicode_ci COMMENT='用户微信关联账号';
 ```
 
 
@@ -62,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `builtin_roles` (
   `updated` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色数据表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8_unicode_ci COMMENT='角色数据表';
 ```
 
 
@@ -79,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `builtin_permissions` (
   `updated` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `code` (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='权限数据表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8_unicode_ci COMMENT='权限数据表';
 ```
 
 
@@ -95,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `builtin_user_roles` (
   KEY `role_id` (`role_id`),
   CONSTRAINT `builtin_user_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `builtin_users` (`id`),
   CONSTRAINT `builtin_user_roles_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `builtin_roles` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户角色关联表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8_unicode_ci COMMENT='用户角色关联表';
 ```
 
 
@@ -111,7 +139,7 @@ CREATE TABLE IF NOT EXISTS `builtin_user_permissions` (
   KEY `permission_id` (`permission_id`),
   CONSTRAINT `builtin_user_permissions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `builtin_users` (`id`),
   CONSTRAINT `builtin_user_permissions_ibfk_2` FOREIGN KEY (`permission_id`) REFERENCES `builtin_permissions` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户权限关联表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8_unicode_ci COMMENT='用户权限关联表';
 ```
 
 
@@ -127,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `builtin_role_permissions` (
   KEY `permission_id` (`permission_id`),
   CONSTRAINT `builtin_role_permissions_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `builtin_roles` (`id`),
   CONSTRAINT `builtin_role_permissions_ibfk_2` FOREIGN KEY (`permission_id`) REFERENCES `builtin_permissions` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色权限关联表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8_unicode_ci COMMENT='角色权限关联表';
 
 ```
 

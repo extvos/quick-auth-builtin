@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Mingcai SHEN
  */
-@Api(tags = {"权限操作"})
+@Api(tags = {"权限管理"})
 @RestController
 @RequestMapping("/_builtin/auth/permission")
 @RequiresPermissions(value = {"*","admin","administration"},logical = Logical.OR)
