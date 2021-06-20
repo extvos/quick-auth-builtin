@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.extvos.auth.entity.UserCellphone;
 
 /**
- * @author shenmc
+ * @author Mingcai SHEN
  */
 public interface UserCellphoneMapper extends BaseMapper<UserCellphone> {
 

@@ -1,7 +1,7 @@
 package org.extvos.auth.entity;
 
 /**
- * @author shenmc
+ * @author Mingcai SHEN
  */
 
 import com.baomidou.mybatisplus.annotation.TableField;

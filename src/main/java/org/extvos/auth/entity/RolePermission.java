@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.sql.Timestamp;
 
 /**
- * @author shenmc
+ * @author Mingcai SHEN
  */
 @TableName("builtin_role_permissions")
 public class RolePermission {
