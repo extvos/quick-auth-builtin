@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.extvos</groupId>
+    <groupId>io.github.extvos</groupId>
     <artifactId>quick-auth-builtin</artifactId>
     <name>quick-auth-builtin</name>
     <description>基于本地用户认证</description>
@@ -50,24 +50,24 @@
         </dependency>
 
         <dependency>
-            <groupId>org.extvos</groupId>
+            <groupId>io.github.extvos</groupId>
             <artifactId>quick-lib-common</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.extvos</groupId>
+            <groupId>io.github.extvos</groupId>
             <artifactId>quick-lib-restlet</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>org.extvos</groupId>
+            <groupId>io.github.extvos</groupId>
             <artifactId>quick-auth-base</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.extvos</groupId>
+            <groupId>io.github.extvos</groupId>
             <artifactId>quick-auth-oauth2</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
