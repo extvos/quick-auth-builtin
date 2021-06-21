@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.extvos.auth.config.AuthLocalAutoConfigure
+plus.extvos.auth.config.AuthLocalAutoConfigure

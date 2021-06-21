@@ -20,7 +20,7 @@ mybatis-plus:
   # 映射文件所在路径
   mapper-locations: classpath*:mapper/**/*.xml
   # 项目 pojo类所在包路径
-  type-aliases-package: org.extvos.auth.entity #
+  type-aliases-package: plus.extvos.auth.entity #
 ```
 
 ## 数据表
