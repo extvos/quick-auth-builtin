@@ -1,13 +1,12 @@
 package plus.extvos.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import plus.extvos.auth.entity.Permission;
-import plus.extvos.auth.entity.Role;
-import plus.extvos.auth.entity.User;
+import plus.extvos.auth.dto.Permission;
+import plus.extvos.auth.dto.Role;
+import plus.extvos.auth.dto.User;
 import plus.extvos.auth.mapper.PermissionMapper;
 import plus.extvos.auth.mapper.RoleMapper;
 import plus.extvos.auth.service.UserService;
-import plus.extvos.auth.utils.CredentialHash;
 import plus.extvos.restlet.QuerySet;
 import plus.extvos.restlet.controller.BaseController;
 import plus.extvos.restlet.exception.RestletException;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 用户数据表

@@ -1,4 +1,4 @@
-package plus.extvos.auth.entity;
+package plus.extvos.auth.dto;
 
 /**
  * @author Mingcai SHEN

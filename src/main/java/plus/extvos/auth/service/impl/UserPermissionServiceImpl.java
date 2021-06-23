@@ -1,6 +1,6 @@
 package plus.extvos.auth.service.impl;
 
-import plus.extvos.auth.entity.UserPermission;
+import plus.extvos.auth.dto.UserPermission;
 import plus.extvos.auth.mapper.UserPermissionMapper;
 import plus.extvos.auth.service.UserPermissionService;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;

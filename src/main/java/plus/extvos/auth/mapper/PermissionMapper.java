@@ -1,7 +1,7 @@
 package plus.extvos.auth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import plus.extvos.auth.entity.Permission;
+import plus.extvos.auth.dto.Permission;
 
 /**
  * 权限数据表

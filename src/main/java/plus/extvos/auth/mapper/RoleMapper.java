@@ -1,7 +1,7 @@
 package plus.extvos.auth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import plus.extvos.auth.entity.Role;
+import plus.extvos.auth.dto.Role;
 
 /**
  * 角色数据表

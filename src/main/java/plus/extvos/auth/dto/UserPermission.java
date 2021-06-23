@@ -1,8 +1,6 @@
-package plus.extvos.auth.entity;
+package plus.extvos.auth.dto;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -11,13 +9,14 @@ import java.sql.Timestamp;
 /**
  * @author Mingcai SHEN
  */
-@TableName("builtin_role_permissions")
-public class RolePermission {
+@TableName("builtin_user_permissions")
+public class UserPermission {
     /**
-     * roleId / RoleId
+     * userId / UserId
      */
-    @TableField(value="role_id")
-    private Integer roleId;
+    @TableField(value="user_id")
+    private Long userId;
+
 
     /**
      * permissionId / PermissionId
@@ -31,12 +30,12 @@ public class RolePermission {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private Timestamp updated;
 
-    public Integer getRoleId() {
-        return roleId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setRoleId(Integer roleId) {
-        this.roleId = roleId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Integer getPermissionId() {
@@ -55,12 +54,12 @@ public class RolePermission {
         this.updated = updated;
     }
 
-    public RolePermission(Integer roleId, Integer permissionId) {
-        this.roleId = roleId;
+    public UserPermission(Long userId, Integer permissionId) {
+        this.userId = userId;
         this.permissionId = permissionId;
     }
 
-    public RolePermission() {
+    public UserPermission(){
 
     }
 }

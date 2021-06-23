@@ -1,6 +1,6 @@
 package plus.extvos.auth.service.impl;
 
-import plus.extvos.auth.entity.UserCellphone;
+import plus.extvos.auth.dto.UserCellphone;
 import plus.extvos.auth.mapper.UserCellphoneMapper;
 import plus.extvos.auth.service.UserCellphoneService;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;

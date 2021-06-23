@@ -1,4 +1,4 @@
-package plus.extvos.auth.entity;
+package plus.extvos.auth.dto;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -10,33 +10,38 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.sql.Timestamp;
 
 /**
- * 角色数据表
+ * 用户数据表
  *
  * @author Mingcai SHEN
  */
-@TableName("builtin_roles")
-public class Role {
+@TableName("builtin_users")
+public class User {
 
     /**
      * id / ID
      */
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     /**
-     * code / 角色代码
+     * username / 用户名
      */
-    private String code;
+    private String username;
 
     /**
-     * name / 角色名称
+     * password / 密码
      */
-    private String name;
+    private String password;
 
     /**
-     * comment / 角色描述
+     * nickname / 昵称
      */
-    private String comment;
+    private String nickname;
+
+    /**
+     * status / 状态: 0 = 注册, 1: 激活, -1: 锁定
+     */
+    private Short status;
 
     /**
      * created / 创建时间
@@ -50,6 +55,18 @@ public class Role {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private Timestamp updated;
 
+
+    /**
+     *
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @TableField(exist = false)
+    private Integer[] roleIds;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @TableField(exist = false)
+    private Role[] roles;
+
     /**
      *
      */
@@ -61,36 +78,44 @@ public class Role {
     @TableField(exist = false)
     private Permission[] permissions;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public String getUsername() {
+        return username;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getName() {
-        return name;
+    public String getPassword() {
+        return password;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getComment() {
-        return comment;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public Short getStatus() {
+        return status;
+    }
+
+    public void setStatus(Short status) {
+        this.status = status;
     }
 
     public Timestamp getCreated() {
@@ -109,6 +134,22 @@ public class Role {
         this.updated = updated;
     }
 
+    public Integer[] getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(Integer[] roleIds) {
+        this.roleIds = roleIds;
+    }
+
+    public Role[] getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Role[] roles) {
+        this.roles = roles;
+    }
+
     public Integer[] getPermissionIds() {
         return permissionIds;
     }
@@ -125,16 +166,17 @@ public class Role {
         this.permissions = permissions;
     }
 
-    public Role(Integer id, String code, String name, String comment, Timestamp created, Timestamp updated) {
+    public User(Long id, String username, String password, String nickname, Short status, Timestamp created, Timestamp updated) {
         this.id = id;
-        this.code = code;
-        this.name = name;
-        this.comment = comment;
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.status = status;
         this.created = created;
         this.updated = updated;
     }
 
-    public Role(){
+    public User() {
 
     }
 }
