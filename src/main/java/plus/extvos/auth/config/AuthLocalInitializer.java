@@ -51,7 +51,7 @@ public class AuthLocalInitializer implements ApplicationRunner {
                 UserPermission.class.getAnnotation(TableName.class).value(),
                 UserRole.class.getAnnotation(TableName.class).value(),
                 RolePermission.class.getAnnotation(TableName.class).value(),
-                UserWechatAccount.class.getAnnotation(TableName.class).value(),
+                UserOpenAccount.class.getAnnotation(TableName.class).value(),
                 UserCellphone.class.getAnnotation(TableName.class).value(),
         };
         for (int i = 0; i < tableNames.length; i++) {
