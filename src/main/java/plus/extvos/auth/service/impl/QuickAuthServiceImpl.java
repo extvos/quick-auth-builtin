@@ -1,6 +1,7 @@
 package plus.extvos.auth.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import plus.extvos.auth.dto.OAuthInfo;
 import plus.extvos.auth.dto.PermissionInfo;
 import plus.extvos.auth.dto.RoleInfo;
 import plus.extvos.auth.dto.UserInfo;
@@ -242,7 +243,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
-    public UserInfo resolve(String provider, String openId, Serializable userId, Map<String, Object> params) throws
+    public OAuthInfo resolve(String provider, String openId, Serializable userId, Map<String, Object> params) throws
             RestletException {
         log.debug("resolve:>>> {}, {} ", provider, openId);
 //        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
@@ -263,7 +264,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         if (null == user) {
             return null;
         }
-        Map<String, Object> extraInfo = new HashMap<>();
+        Map<String, Object> extraInfo = new HashMap<>(8);
         UserCellphone uc = userCellphoneMapper.selectById(user.getId());
         String cellphone = uc != null ? uc.getCellphone() : null;
         extraInfo.put(OAuthProvider.PROVIDER_KEY, uwa.getProvider());
@@ -274,12 +275,13 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
         extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
         extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
-        return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), cellphone, extraInfo);
+//        return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), cellphone, extraInfo);
+        return new OAuthInfo(uwa.getId(),uwa.getUserId(), uwa.getProvider(),uwa.getOpenId(),extraInfo);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserInfo register(String provider, String openId, String username, String
+    public OAuthInfo register(String provider, String openId, String username, String
             password, Map<String, Object> params) throws RestletException {
 //        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         QueryWrapper<User> qw = new QueryWrapper<>();
@@ -343,12 +345,13 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
         extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
         extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
-        return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), cellphone, extraInfo);
+//        return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), cellphone, extraInfo);
+        return new OAuthInfo(uwa.getId(),uwa.getUserId(),uwa.getProvider(), uwa.getOpenId(),extraInfo);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserInfo update(String provider, String openId, Serializable userId, Map<String, Object> params) throws RestletException {
+    public OAuthInfo update(String provider, String openId, Serializable userId, Map<String, Object> params) throws RestletException {
         Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         Assert.notEmpty(openId, RestletException.badRequest("openId required"));
         Assert.notEmpty(params, RestletException.badRequest("params can not be empty"));
@@ -424,6 +427,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 userCellphoneMapper.updateById(uc);
             }
         }
-        return getUserById(uwa.getUserId(), false);
+        return resolve(provider, openId,userId,params);
+//        return getUserById(uwa.getUserId(), false);
     }
 }
