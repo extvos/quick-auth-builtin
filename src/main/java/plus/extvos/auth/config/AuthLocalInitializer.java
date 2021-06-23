@@ -1,7 +1,7 @@
 package plus.extvos.auth.config;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import plus.extvos.auth.dto.*;
+import plus.extvos.auth.entity.*;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.slf4j.Logger;

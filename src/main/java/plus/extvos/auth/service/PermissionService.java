@@ -1,6 +1,6 @@
 package plus.extvos.auth.service;
 
-import plus.extvos.auth.dto.Permission;
+import plus.extvos.auth.entity.Permission;
 import plus.extvos.restlet.service.BaseService;
 
 /**

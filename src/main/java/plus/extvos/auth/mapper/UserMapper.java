@@ -1,7 +1,7 @@
 package plus.extvos.auth.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import plus.extvos.auth.dto.User;
+import plus.extvos.auth.entity.User;
 
 /**
  * 用户数据表

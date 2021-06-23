@@ -1,4 +1,4 @@
-package plus.extvos.auth.dto;
+package plus.extvos.auth.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;

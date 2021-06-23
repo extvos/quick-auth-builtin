@@ -1,6 +1,6 @@
 package plus.extvos.auth.service.impl;
 
-import plus.extvos.auth.dto.RolePermission;
+import plus.extvos.auth.entity.RolePermission;
 import plus.extvos.auth.mapper.RolePermissionMapper;
 import plus.extvos.auth.service.RolePermissionService;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;

@@ -1,9 +1,9 @@
 package plus.extvos.auth.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import plus.extvos.auth.dto.Permission;
-import plus.extvos.auth.dto.Role;
-import plus.extvos.auth.dto.User;
+import plus.extvos.auth.entity.Permission;
+import plus.extvos.auth.entity.Role;
+import plus.extvos.auth.entity.User;
 import plus.extvos.auth.mapper.PermissionMapper;
 import plus.extvos.auth.mapper.RoleMapper;
 import plus.extvos.auth.service.UserService;

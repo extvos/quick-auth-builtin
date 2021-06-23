@@ -1,6 +1,6 @@
 package plus.extvos.auth.service;
 
-import plus.extvos.auth.dto.UserRole;
+import plus.extvos.auth.entity.UserRole;
 import plus.extvos.restlet.service.BaseService;
 
 /**

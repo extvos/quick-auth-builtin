@@ -1,6 +1,6 @@
 package plus.extvos.auth.service.impl;
 
-import plus.extvos.auth.dto.UserOpenAccount;
+import plus.extvos.auth.entity.UserOpenAccount;
 import plus.extvos.auth.mapper.UserOpenAccountMapper;
 import plus.extvos.auth.service.UserOpenAccountService;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;

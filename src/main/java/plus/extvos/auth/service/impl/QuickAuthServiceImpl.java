@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import plus.extvos.auth.dto.PermissionInfo;
 import plus.extvos.auth.dto.RoleInfo;
 import plus.extvos.auth.dto.UserInfo;
-import plus.extvos.auth.dto.*;
+import plus.extvos.auth.entity.*;
 import plus.extvos.auth.enums.AuthCode;
 import plus.extvos.auth.mapper.*;
 import plus.extvos.auth.service.*;
