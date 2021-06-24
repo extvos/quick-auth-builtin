@@ -14,14 +14,14 @@ public class UserPermission {
     /**
      * userId / UserId
      */
-    @TableField(value="user_id")
+    @TableField(value = "user_id")
     private Long userId;
 
 
     /**
      * permissionId / PermissionId
      */
-    @TableField(value="permission_id")
+    @TableField(value = "permission_id")
     private Integer permissionId;
 
     /**
@@ -59,7 +59,7 @@ public class UserPermission {
         this.permissionId = permissionId;
     }
 
-    public UserPermission(){
+    public UserPermission() {
 
     }
 }

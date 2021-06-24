@@ -14,13 +14,13 @@ public class RolePermission {
     /**
      * roleId / RoleId
      */
-    @TableField(value="role_id")
+    @TableField(value = "role_id")
     private Integer roleId;
 
     /**
      * permissionId / PermissionId
      */
-    @TableField(value="permission_id")
+    @TableField(value = "permission_id")
     private Integer permissionId;
 
     /**

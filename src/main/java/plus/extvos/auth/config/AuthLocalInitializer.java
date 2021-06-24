@@ -1,7 +1,6 @@
 package plus.extvos.auth.config;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import plus.extvos.auth.entity.*;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.slf4j.Logger;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import plus.extvos.auth.entity.*;
 
 import javax.sql.DataSource;
 import java.io.Reader;
@@ -45,14 +45,14 @@ public class AuthLocalInitializer implements ApplicationRunner {
         ScriptRunner runner = new ScriptRunner(conn);
         runner.setLogWriter(dataSource.getLogWriter());
         String[] tableNames = new String[]{
-                User.class.getAnnotation(TableName.class).value(),
-                Role.class.getAnnotation(TableName.class).value(),
-                Permission.class.getAnnotation(TableName.class).value(),
-                UserPermission.class.getAnnotation(TableName.class).value(),
-                UserRole.class.getAnnotation(TableName.class).value(),
-                RolePermission.class.getAnnotation(TableName.class).value(),
-                UserOpenAccount.class.getAnnotation(TableName.class).value(),
-                UserCellphone.class.getAnnotation(TableName.class).value(),
+            User.class.getAnnotation(TableName.class).value(),
+            Role.class.getAnnotation(TableName.class).value(),
+            Permission.class.getAnnotation(TableName.class).value(),
+            UserPermission.class.getAnnotation(TableName.class).value(),
+            UserRole.class.getAnnotation(TableName.class).value(),
+            RolePermission.class.getAnnotation(TableName.class).value(),
+            UserOpenAccount.class.getAnnotation(TableName.class).value(),
+            UserCellphone.class.getAnnotation(TableName.class).value(),
         };
         for (int i = 0; i < tableNames.length; i++) {
             tableNames[i] = "'" + tableNames[i] + "'";

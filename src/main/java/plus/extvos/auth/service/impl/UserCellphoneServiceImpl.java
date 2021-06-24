@@ -1,11 +1,11 @@
 package plus.extvos.auth.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import plus.extvos.auth.entity.UserCellphone;
 import plus.extvos.auth.mapper.UserCellphoneMapper;
 import plus.extvos.auth.service.UserCellphoneService;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Mingcai SHEN

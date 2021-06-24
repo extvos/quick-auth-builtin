@@ -14,14 +14,14 @@ public class UserRole {
     /**
      * userId / UserId
      */
-    @TableField(value="user_id")
+    @TableField(value = "user_id")
     private Long userId;
 
 
     /**
      * roleId / RoleId
      */
-    @TableField(value="role_id")
+    @TableField(value = "role_id")
     private Integer roleId;
 
     /**
@@ -59,7 +59,7 @@ public class UserRole {
         this.roleId = roleId;
     }
 
-    public UserRole(){
+    public UserRole() {
 
     }
 }

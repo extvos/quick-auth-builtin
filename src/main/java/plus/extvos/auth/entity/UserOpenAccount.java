@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * 用户第三方开放账户关联账号
+ *
  * @author Mingcai SHEN
  */
 @TableName("builtin_user_open_accounts")
@@ -23,81 +24,81 @@ public class UserOpenAccount {
     /**
      * provider / 开发账号提供方,与OAuth2 Provider对应
      */
-    @TableField(value="provider")
+    @TableField(value = "provider")
     private String provider;
 
 
     /**
      * userId / 用户ID
      */
-    @TableField(value="user_id")
+    @TableField(value = "user_id")
     private Long userId;
 
     /**
      * open_id / OpenID
      */
-    @TableField(value="open_id")
+    @TableField(value = "open_id")
     private String openId;
 
     /**
      * nickname / 昵称
      */
-    @TableField(value="nickname")
+    @TableField(value = "nickname")
     private String nickname;
 
     /**
      * language / 用户语言
      */
-    @TableField(value="language")
+    @TableField(value = "language")
     private String language;
 
     /**
      * city / 用户所在城市
      */
-    @TableField(value="city")
+    @TableField(value = "city")
     private String city;
 
     /**
      * province / 用户所在省
      */
-    @TableField(value="province")
+    @TableField(value = "province")
     private String province;
 
     /**
      * country / 用户所在国家
      */
-    @TableField(value="country")
+    @TableField(value = "country")
     private String country;
 
     /**
      * avatar_url / 头像URL
      */
-    @TableField(value="avatar_url")
+    @TableField(value = "avatar_url")
     private String avatarUrl;
 
 
     /**
      * extras / 扩展信息
      */
-    @TableField(value="extras")
+    @TableField(value = "extras")
     @JsonIgnore
     private String extraString;
 
     @TableField(exist = false)
-    private Map<String,Object> extras;
+    private Map<String, Object> extras;
 
     /**
      * created / 创建时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    @TableField(value="created")
+    @TableField(value = "created")
     private Timestamp created;
 
     /**
      * updated / 更新时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    @TableField(value="updated")
+    @TableField(value = "updated")
     private Timestamp updated;
 
     public Long getId() {

@@ -132,7 +132,7 @@ public class Role {
         this.updated = updated;
     }
 
-    public Role(){
+    public Role() {
 
     }
 }

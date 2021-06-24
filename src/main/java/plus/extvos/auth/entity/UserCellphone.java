@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 
 /**
  * 用户微信关联账号
+ *
  * @author Mingcai SHEN
  */
 @TableName("builtin_user_cellphones")
@@ -19,7 +20,7 @@ public class UserCellphone {
     /**
      * id / 用户ID
      */
-    @TableField(value="id")
+    @TableField(value = "id")
     private Long id;
 
     /**
@@ -31,14 +32,14 @@ public class UserCellphone {
      * created / 创建时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    @TableField(value="created")
+    @TableField(value = "created")
     private Timestamp created;
 
     /**
      * updated / 更新时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    @TableField(value="updated")
+    @TableField(value = "updated")
     private Timestamp updated;
 
     public Long getId() {
@@ -73,7 +74,7 @@ public class UserCellphone {
         this.updated = updated;
     }
 
-    public UserCellphone(){
+    public UserCellphone() {
     }
 
     public UserCellphone(Long id, String cellphone) {

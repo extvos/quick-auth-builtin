@@ -1,6 +1,8 @@
 package plus.extvos.auth.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import plus.extvos.auth.entity.User;
 import plus.extvos.auth.entity.UserPermission;
 import plus.extvos.auth.entity.UserRole;
@@ -10,8 +12,6 @@ import plus.extvos.auth.mapper.UserRoleMapper;
 import plus.extvos.auth.service.UserService;
 import plus.extvos.restlet.exception.RestletException;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 

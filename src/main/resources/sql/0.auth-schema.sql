@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS `builtin_user_open_accounts` (
 	PRIMARY KEY (`id`) USING BTREE,
 	UNIQUE INDEX `open_user` (`provider`, `user_id`) USING BTREE,
 	UNIQUE INDEX `open_account` (`provider`, `open_id`) USING BTREE,
-	CONSTRAINT `builtin_user_open_accounts_ibfk_1` FOREIGN KEY (`id`) REFERENCES `builtin_users` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
+	CONSTRAINT `builtin_user_open_accounts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `builtin_users` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
 )  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户第三方开放账户关联账号';
 -- 数据导出被取消选择。
 
