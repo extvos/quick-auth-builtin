@@ -94,22 +94,26 @@ CREATE TABLE IF NOT EXISTS `builtin_user_roles` (
 
 -- 数据导出被取消选择。
 
--- 导出  表 builtin_user_wechat_accounts 结构
-CREATE TABLE IF NOT EXISTS `builtin_user_wechat_accounts` (
-	`id` BIGINT(20) NOT NULL COMMENT '用户ID',
-	`open_id` VARCHAR(64) NOT NULL COMMENT '微信OpenID' COLLATE 'utf8mb4_general_ci',
-	`nickname` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '微信昵称' COLLATE 'utf8mb4_general_ci',
+-- 导出  表 builtin_user_open_accounts 结构
+CREATE TABLE IF NOT EXISTS `builtin_user_open_accounts` (
+	`id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+	`provider` VARCHAR(64) NOT NULL COMMENT 'Provider' COLLATE 'utf8mb4_general_ci',
+	`user_id` bigint(20) NOT NULL COMMENT '用户ID',
+	`open_id` VARCHAR(64) NOT NULL COMMENT 'OpenID' COLLATE 'utf8mb4_general_ci',
+	`nickname` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '昵称' COLLATE 'utf8mb4_general_ci',
 	`language` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '用户语言' COLLATE 'utf8mb4_general_ci',
 	`city` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '用户所在城市' COLLATE 'utf8mb4_general_ci',
 	`province` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '用户所在省' COLLATE 'utf8mb4_general_ci',
 	`country` VARCHAR(64) NOT NULL DEFAULT '' COMMENT '用户所在国家' COLLATE 'utf8mb4_general_ci',
 	`avatar_url` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '头像URL' COLLATE 'utf8mb4_general_ci',
+	`extras` TEXT NULL COMMENT '扩展信息' COLLATE 'utf8mb4_general_ci',
 	`created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
 	`updated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
 	PRIMARY KEY (`id`) USING BTREE,
-	UNIQUE INDEX `open_id` (`open_id`) USING BTREE,
-	CONSTRAINT `builtin_user_wechat_accounts_ibfk_1` FOREIGN KEY (`id`) REFERENCES `builtin_users` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
-)  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户微信关联账号';
+	UNIQUE INDEX `open_user` (`provider`, `user_id`) USING BTREE,
+	UNIQUE INDEX `open_account` (`provider`, `open_id`) USING BTREE,
+	CONSTRAINT `builtin_user_open_accounts_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `builtin_users` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户第三方开放账户关联账号';
 -- 数据导出被取消选择。
 
 -- 导出  表 builtin_user_cellphones 结构

@@ -1,8 +1,6 @@
 package plus.extvos.auth.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -16,14 +14,14 @@ public class UserPermission {
     /**
      * userId / UserId
      */
-    @TableField(value="user_id")
+    @TableField(value = "user_id")
     private Long userId;
 
 
     /**
      * permissionId / PermissionId
      */
-    @TableField(value="permission_id")
+    @TableField(value = "permission_id")
     private Integer permissionId;
 
     /**
@@ -61,7 +59,7 @@ public class UserPermission {
         this.permissionId = permissionId;
     }
 
-    public UserPermission(){
+    public UserPermission() {
 
     }
 }

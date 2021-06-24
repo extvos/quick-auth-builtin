@@ -1,9 +1,6 @@
 package plus.extvos.auth.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -21,6 +18,7 @@ public class Role {
      * id / ID
      */
     @TableId(type = IdType.AUTO)
+    @TableField(fill = FieldFill.INSERT)
     private Integer id;
 
     /**
@@ -134,7 +132,7 @@ public class Role {
         this.updated = updated;
     }
 
-    public Role(){
+    public Role() {
 
     }
 }
