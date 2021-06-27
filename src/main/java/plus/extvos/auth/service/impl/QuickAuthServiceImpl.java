@@ -352,7 +352,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public OAuthInfo update(String provider, String openId, Serializable userId, Map<String, Object> params) throws RestletException {
-        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
+        //Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         Assert.notEmpty(openId, RestletException.badRequest("openId required"));
         Assert.notEmpty(params, RestletException.badRequest("params can not be empty"));
         log.debug("update:> {}, {}, {}", openId, userId, params);
