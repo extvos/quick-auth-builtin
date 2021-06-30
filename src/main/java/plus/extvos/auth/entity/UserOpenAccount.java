@@ -101,6 +101,10 @@ public class UserOpenAccount {
     @TableField(value = "updated")
     private Timestamp updated;
 
+    @JsonIgnore
+    @TableField(exist = false)
+    private User user;
+
     public Long getId() {
         return id;
     }
@@ -211,5 +215,13 @@ public class UserOpenAccount {
 
     public void setUpdated(Timestamp updated) {
         this.updated = updated;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

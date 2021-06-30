@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.sql.Timestamp;
+import java.util.Map;
 
 /**
  * 用户数据表
@@ -66,8 +67,16 @@ public class User {
     private Role[] roles;
 
     /**
-     *
+     * cellphone / 手机号码
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @TableField(exist = false)
+    private String cellphone;
+
+    @TableField(exist = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Map<String,UserOpenAccount> openAccounts;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(exist = false)
     private Integer[] permissionIds;
@@ -130,6 +139,22 @@ public class User {
 
     public void setUpdated(Timestamp updated) {
         this.updated = updated;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
+    }
+
+    public Map<String, UserOpenAccount> getOpenAccounts() {
+        return openAccounts;
+    }
+
+    public void setOpenAccounts(Map<String, UserOpenAccount> openAccounts) {
+        this.openAccounts = openAccounts;
     }
 
     public Integer[] getRoleIds() {

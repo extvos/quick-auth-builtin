@@ -59,15 +59,15 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     @Autowired
     UserCellphoneMapper userCellphoneMapper;
 
+    @Autowired
+    QuickAuthMapper quickAuthMapper;
+
 
     @Override
     public UserInfo getUserByName(String name, boolean checkEnabled) throws RestletException {
-        QueryWrapper<User> qw = new QueryWrapper<>();
-        qw.eq("username", name);
-        User u = userMapper.selectOne(qw);
+        User u = quickAuthMapper.getUserByName(name);
         if (null == u) {
             return null;
-            // throw new RestletException(AuthCode.ACCOUNT_NOT_FOUND, "user not found");
         } else if (checkEnabled && u.getStatus() < 1) {
             if (u.getStatus() == 0) {
                 throw new RestletException(AuthCode.ACCOUNT_DISABLED, "user not activated");
@@ -75,32 +75,13 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 throw new RestletException(AuthCode.ACCOUNT_LOCKED, "user locked");
             }
         } else {
-            UserCellphone uc = userCellphoneMapper.selectById(u.getId());
-            String cellphone = uc != null ? uc.getCellphone() : null;
-            UserInfo ui = new UserInfo(u.getId(), u.getUsername(), u.getPassword(), cellphone);
-//            QueryWrapper<UserWechatAccount> uqw = new QueryWrapper<>();
-//            uqw.eq("id", u.getId());
-//            UserWechatAccount uwa = userOpenAccountMapper.selectOne(uqw);
-//            if (null != uwa) {
-//                Map<String, Object> extraInfo = new HashMap<>();
-//                extraInfo.put(OAuthProvider.NICK_NAME_KEY, uwa.getNickname());
-//                extraInfo.put(OAuthProvider.AVATAR_URL_KEY, uwa.getAvatarUrl());
-//                extraInfo.put(OAuthProvider.COUNTRY_KEY, uwa.getCountry());
-//                extraInfo.put(OAuthProvider.PROVINCE_KEY, uwa.getProvince());
-//                extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
-//                extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
-//                extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
-//                ui.setExtraInfo(extraInfo);
-//            }
-            return ui;
+            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
         }
     }
 
     @Override
     public UserInfo getUserById(Serializable id, boolean checkEnabled) throws RestletException {
-        QueryWrapper<User> qw = new QueryWrapper<>();
-        qw.eq("id", id);
-        User u = userMapper.selectOne(qw);
+        User u = quickAuthMapper.getUserById(id);
         if (null == u) {
             return null;
         } else if (checkEnabled && u.getStatus() < 1) {
@@ -110,38 +91,13 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 throw RestletException.forbidden("user was locked");
             }
         } else {
-            UserCellphone uc = userCellphoneMapper.selectById(u.getId());
-            String cellphone = uc != null ? uc.getCellphone() : null;
-            UserInfo ui = new UserInfo(u.getId(), u.getUsername(), u.getPassword(), cellphone);
-//            QueryWrapper<UserWechatAccount> uqw = new QueryWrapper<>();
-//            uqw.eq("id", u.getId());
-//            UserWechatAccount uwa = userOpenAccountMapper.selectOne(uqw);
-//            if (null != uwa) {
-//                Map<String, Object> extraInfo = new HashMap<>();
-//                extraInfo.put(OAuthProvider.NICK_NAME_KEY, uwa.getNickname());
-//                extraInfo.put(OAuthProvider.AVATAR_URL_KEY, uwa.getAvatarUrl());
-//                extraInfo.put(OAuthProvider.COUNTRY_KEY, uwa.getCountry());
-//                extraInfo.put(OAuthProvider.PROVINCE_KEY, uwa.getProvince());
-//                extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
-//                extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
-//                extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
-//                ui.setExtraInfo(extraInfo);
-//            }
-            return ui;
+            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
         }
     }
 
     @Override
     public UserInfo getUserByPhone(String phone, boolean checkEnabled) throws RestletException {
-        QueryWrapper<UserCellphone> qwuc = new QueryWrapper<>();
-        qwuc.eq("cellphone", phone);
-        UserCellphone uc = userCellphoneMapper.selectOne(qwuc);
-        if (null == uc) {
-            return null;
-        }
-        QueryWrapper<User> qw = new QueryWrapper<>();
-        qw.eq("id", uc.getId());
-        User u = userMapper.selectOne(qw);
+        User u = quickAuthMapper.getUserByPhone(phone);
         if (null == u) {
             return null;
         } else if (checkEnabled && u.getStatus() < 1) {
@@ -151,22 +107,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 throw RestletException.forbidden("user was locked");
             }
         } else {
-            UserInfo ui = new UserInfo(u.getId(), u.getUsername(), u.getPassword(), uc.getCellphone());
-//            QueryWrapper<UserWechatAccount> uqw = new QueryWrapper<>();
-//            qw.eq("id", u.getId());
-//            UserWechatAccount uwa = userOpenAccountMapper.selectOne(uqw);
-//            if (null != uwa) {
-//                Map<String, Object> extraInfo = new HashMap<>();
-//                extraInfo.put(OAuthProvider.NICK_NAME_KEY, uwa.getNickname());
-//                extraInfo.put(OAuthProvider.AVATAR_URL_KEY, uwa.getAvatarUrl());
-//                extraInfo.put(OAuthProvider.COUNTRY_KEY, uwa.getCountry());
-//                extraInfo.put(OAuthProvider.PROVINCE_KEY, uwa.getProvince());
-//                extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
-//                extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
-//                extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, uc.getCellphone());
-//                ui.setExtraInfo(extraInfo);
-//            }
-            return ui;
+            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
         }
     }
 
@@ -246,21 +187,14 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     public OAuthInfo resolve(String provider, String openId, Serializable userId, Map<String, Object> params) throws
         RestletException {
         log.debug("resolve:>>> {}, {} ", provider, openId);
-//        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
-        QueryWrapper<UserOpenAccount> qw = new QueryWrapper<>();
-        qw.eq("provider", provider);
-        if (userId != null) {
-            qw.eq("user_id", userId);
-        } else {
-            qw.eq("open_id", openId);
-        }
-        UserOpenAccount uwa = userOpenAccountMapper.selectOne(qw);
+
+        UserOpenAccount uwa = quickAuthMapper.resolve(provider,openId,userId);
         if (null == uwa) {
             return null;
         } else if (!uwa.getOpenId().equals(openId)) {
             throw RestletException.conflict("user '" + userId + "' already linked with '" + uwa.getOpenId() + "'");
         }
-        User user = userMapper.selectById(uwa.getId());
+        User user = uwa.getUser();
         if (null == user) {
             return null;
         }
@@ -275,7 +209,6 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
         extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
         extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
-//        return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), cellphone, extraInfo);
         return new OAuthInfo(uwa.getId(), uwa.getUserId(), uwa.getProvider(), uwa.getOpenId(), extraInfo);
     }
 
@@ -297,8 +230,18 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         if (username == null || username.isEmpty()) {
             username = openId;
         }
-        qw.eq("username", username);
-        user = userMapper.selectOne(qw);
+        // �ֻ������Ѿ�������
+        if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
+            String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
+            UserCellphone userCellphone = userCellphoneMapper.selectOne(new QueryWrapper<UserCellphone>().eq("cellphone", cellphone));
+            if(userCellphone != null){
+                user = userMapper.selectOne(new QueryWrapper<User>().eq("id", userCellphone.getId()));
+            }
+        }
+        if(user == null){
+            qw.eq("username", username);
+            user = userMapper.selectOne(qw);
+        }
         if (user == null) {
             log.info("User {} not exists, register now ...", username);
             user = new User();
@@ -311,7 +254,8 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
             user.setStatus((short) 1);
             userMapper.insert(user);
             if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
-                userCellphoneMapper.insert(new UserCellphone(user.getId(), params.get(OAuthProvider.PHONE_NUMBER_KEY).toString()));
+                String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
+                userCellphoneMapper.insert(new UserCellphone(user.getId(), cellphone));
             }
             user = userMapper.selectOne(qw);
             if (null == user) {
