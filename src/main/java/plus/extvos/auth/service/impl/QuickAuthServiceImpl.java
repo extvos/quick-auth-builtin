@@ -14,7 +14,6 @@ import plus.extvos.auth.entity.*;
 import plus.extvos.auth.enums.AuthCode;
 import plus.extvos.auth.mapper.*;
 import plus.extvos.auth.service.*;
-import plus.extvos.auth.service.wechat.WechatOAuthServiceProvider;
 import plus.extvos.common.Validator;
 import plus.extvos.common.utils.QuickHash;
 import plus.extvos.restlet.Assert;
@@ -230,7 +229,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         if (username == null || username.isEmpty()) {
             username = openId;
         }
-        // �ֻ������Ѿ�������
+        // 手机可能已经存在了
         if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
             String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
             UserCellphone userCellphone = userCellphoneMapper.selectOne(new QueryWrapper<UserCellphone>().eq("cellphone", cellphone));
