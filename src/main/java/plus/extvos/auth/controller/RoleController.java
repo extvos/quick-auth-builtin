@@ -12,7 +12,7 @@ import plus.extvos.auth.entity.Role;
 import plus.extvos.auth.mapper.PermissionMapper;
 import plus.extvos.auth.service.RoleService;
 import plus.extvos.restlet.controller.BaseController;
-import plus.extvos.restlet.exception.RestletException;
+import plus.extvos.common.exception.ResultException;
 
 import java.io.Serializable;
 
@@ -40,17 +40,17 @@ public class RoleController extends BaseController<Role, RoleService> {
 
 
     @Override
-    public void postInsert(Role entity) throws RestletException {
+    public void postInsert(Role entity) throws ResultException {
         super.postInsert(entity);
     }
 
     @Override
-    public void postUpdate(Serializable id, Role entity) throws RestletException {
+    public void postUpdate(Serializable id, Role entity) throws ResultException {
         super.postUpdate(id, entity);
     }
 
     @Override
-    public Role postSelect(Role entity) throws RestletException {
+    public Role postSelect(Role entity) throws ResultException {
         QueryWrapper<Permission> qw = new QueryWrapper<>();
         qw.inSql("id", "SELECT permission_id FROM builtin_role_permissions WHERE role_id = " + entity.getId());
         entity.setPermissions(permissionMapper.selectList(qw).toArray(new Permission[0]));

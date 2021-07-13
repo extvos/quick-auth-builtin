@@ -10,7 +10,7 @@ import plus.extvos.auth.mapper.UserMapper;
 import plus.extvos.auth.mapper.UserPermissionMapper;
 import plus.extvos.auth.mapper.UserRoleMapper;
 import plus.extvos.auth.service.UserService;
-import plus.extvos.restlet.exception.RestletException;
+import plus.extvos.common.exception.ResultException;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;
 
 import java.io.Serializable;
@@ -36,7 +36,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     }
 
     @Override
-    public int insert(User entity) throws RestletException {
+    public int insert(User entity) throws ResultException {
         int ret = super.insert(entity);
         Integer[] permIds = entity.getPermissionIds();
         if (permIds != null && permIds.length > 0) {
@@ -56,7 +56,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     }
 
     @Override
-    public int updateById(Serializable id, User entity) throws RestletException {
+    public int updateById(Serializable id, User entity) throws ResultException {
         int ret = super.updateById(id, entity);
         Integer[] permIds = entity.getPermissionIds();
         if (permIds != null) {

@@ -16,8 +16,8 @@ import plus.extvos.auth.mapper.*;
 import plus.extvos.auth.service.*;
 import plus.extvos.common.Validator;
 import plus.extvos.common.utils.QuickHash;
-import plus.extvos.restlet.Assert;
-import plus.extvos.restlet.exception.RestletException;
+import plus.extvos.common.Assert;
+import plus.extvos.common.exception.ResultException;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -63,15 +63,15 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
 
     @Override
-    public UserInfo getUserByName(String name, boolean checkEnabled) throws RestletException {
+    public UserInfo getUserByName(String name, boolean checkEnabled) throws ResultException {
         User u = quickAuthMapper.getUserByName(name);
         if (null == u) {
             return null;
         } else if (checkEnabled && u.getStatus() < 1) {
             if (u.getStatus() == 0) {
-                throw new RestletException(AuthCode.ACCOUNT_DISABLED, "user not activated");
+                throw new ResultException(AuthCode.ACCOUNT_DISABLED, "user not activated");
             } else {
-                throw new RestletException(AuthCode.ACCOUNT_LOCKED, "user locked");
+                throw new ResultException(AuthCode.ACCOUNT_LOCKED, "user locked");
             }
         } else {
             return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
@@ -79,15 +79,15 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
-    public UserInfo getUserById(Serializable id, boolean checkEnabled) throws RestletException {
+    public UserInfo getUserById(Serializable id, boolean checkEnabled) throws ResultException {
         User u = quickAuthMapper.getUserById(id);
         if (null == u) {
             return null;
         } else if (checkEnabled && u.getStatus() < 1) {
             if (u.getStatus() == 0) {
-                throw RestletException.forbidden("user not activated");
+                throw ResultException.forbidden("user not activated");
             } else {
-                throw RestletException.forbidden("user was locked");
+                throw ResultException.forbidden("user was locked");
             }
         } else {
             return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
@@ -95,15 +95,15 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
-    public UserInfo getUserByPhone(String phone, boolean checkEnabled) throws RestletException {
+    public UserInfo getUserByPhone(String phone, boolean checkEnabled) throws ResultException {
         User u = quickAuthMapper.getUserByPhone(phone);
         if (null == u) {
             return null;
         } else if (checkEnabled && u.getStatus() < 1) {
             if (u.getStatus() == 0) {
-                throw RestletException.forbidden("user not activated");
+                throw ResultException.forbidden("user not activated");
             } else {
-                throw RestletException.forbidden("user was locked");
+                throw ResultException.forbidden("user was locked");
             }
         } else {
             return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
@@ -111,7 +111,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
-    public List<RoleInfo> getRoles(Serializable id) throws RestletException {
+    public List<RoleInfo> getRoles(Serializable id) throws ResultException {
         QueryWrapper<Role> qw = new QueryWrapper<>();
         qw.select("code", "name");
         qw.inSql("id", "SELECT role_id FROM builtin_user_roles WHERE user_id =" + id);
@@ -124,7 +124,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
-    public List<PermissionInfo> getPermissions(Serializable id) throws RestletException {
+    public List<PermissionInfo> getPermissions(Serializable id) throws ResultException {
         QueryWrapper<Permission> qw = new QueryWrapper<>();
         qw.select("code", "name");
         qw.inSql("id", "SELECT permission_id FROM builtin_user_permissions WHERE user_id =" + id);
@@ -139,7 +139,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
     @Override
     public Serializable createUserInfo(String username, String password, String[] permissions, String[]
-        roles, Map<String, Object> params) throws RestletException {
+        roles, Map<String, Object> params) throws ResultException {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
@@ -157,7 +157,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
     @Override
     public void updateUserInfo(String username, String password, String[] permissions, String[]
-        roles, Map<String, Object> params) throws RestletException {
+        roles, Map<String, Object> params) throws ResultException {
         User user = new User();
         if (password != null && !password.isEmpty()) {
             user.setPassword(password);
@@ -184,14 +184,14 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
     @Override
     public OAuthInfo resolve(String provider, String openId, Serializable userId, Map<String, Object> params) throws
-        RestletException {
+        ResultException {
         log.debug("resolve:>>> {}, {} ", provider, openId);
 
         UserOpenAccount uwa = quickAuthMapper.resolve(provider,openId,userId);
         if (null == uwa) {
             return null;
         } else if (!uwa.getOpenId().equals(openId)) {
-            throw RestletException.conflict("user '" + userId + "' already linked with '" + uwa.getOpenId() + "'");
+            throw ResultException.conflict("user '" + userId + "' already linked with '" + uwa.getOpenId() + "'");
         }
         User user = uwa.getUser();
         if (null == user) {
@@ -214,15 +214,15 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public OAuthInfo register(String provider, String openId, String username, String
-        password, Map<String, Object> params) throws RestletException {
+        password, Map<String, Object> params) throws ResultException {
 //        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         QueryWrapper<User> qw = new QueryWrapper<>();
-        Assert.notEmpty(openId, RestletException.badRequest("openId required"));
+        Assert.notEmpty(openId, ResultException.badRequest("openId required"));
         QueryWrapper<UserOpenAccount> qwu = new QueryWrapper<>();
         qwu.eq("provider", provider);
         qwu.eq("open_id", openId);
         if (userOpenAccountMapper.selectCount(qwu) > 0) {
-            throw RestletException.conflict("open_id '" + openId + "' of '" + provider + "'already exists");
+            throw ResultException.conflict("open_id '" + openId + "' of '" + provider + "'already exists");
         }
 
         User user = null;
@@ -258,7 +258,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
             }
             user = userMapper.selectOne(qw);
             if (null == user) {
-                throw RestletException.internalServerError("register user failed");
+                throw ResultException.internalServerError("register user failed");
             }
             log.info("Created user {}, linking with {} now ...", username, openId);
         } else {
@@ -294,10 +294,10 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public OAuthInfo update(String provider, String openId, Serializable userId, Map<String, Object> params) throws RestletException {
+    public OAuthInfo update(String provider, String openId, Serializable userId, Map<String, Object> params) throws ResultException {
         //Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
-        Assert.notEmpty(openId, RestletException.badRequest("openId required"));
-        Assert.notEmpty(params, RestletException.badRequest("params can not be empty"));
+        Assert.notEmpty(openId, ResultException.badRequest("openId required"));
+        Assert.notEmpty(params, ResultException.badRequest("params can not be empty"));
         log.debug("update:> {}, {}, {}", openId, userId, params);
         QueryWrapper<UserOpenAccount> qwu = new QueryWrapper<>();
         qwu.select("id", "user_id", "provider", "open_id");
@@ -354,7 +354,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
             if (null == uwa1) {
                 uwa.setOpenId(openId);
                 if (null == uwa.getUserId() || Validator.isEmpty(uwa.getOpenId())) {
-                    throw RestletException.badRequest("openId and userId required");
+                    throw ResultException.badRequest("openId and userId required");
                 } else {
                     userOpenAccountMapper.insert(uwa);
                     uwa1 = uwa;

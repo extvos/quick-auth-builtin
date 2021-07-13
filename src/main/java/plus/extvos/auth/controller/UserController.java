@@ -15,7 +15,7 @@ import plus.extvos.auth.mapper.RoleMapper;
 import plus.extvos.auth.service.UserService;
 import plus.extvos.restlet.QuerySet;
 import plus.extvos.restlet.controller.BaseController;
-import plus.extvos.restlet.exception.RestletException;
+import plus.extvos.common.exception.ResultException;
 
 import java.io.Serializable;
 
@@ -45,12 +45,12 @@ public class UserController extends BaseController<User, UserService> {
     }
 
     @Override
-    public User preInsert(User entity) throws RestletException {
-        throw RestletException.forbidden("not allow to create user directly, use method provided in auth-base.");
+    public User preInsert(User entity) throws ResultException {
+        throw ResultException.forbidden("not allow to create user directly, use method provided in auth-base.");
     }
 
     @Override
-    public User preUpdate(Serializable id, User entity) throws RestletException {
+    public User preUpdate(Serializable id, User entity) throws ResultException {
         if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
             entity.setPassword(entity.getPassword());
         }
@@ -58,15 +58,15 @@ public class UserController extends BaseController<User, UserService> {
     }
 
     @Override
-    public User preUpdate(QuerySet<User> qs, User entity) throws RestletException {
+    public User preUpdate(QuerySet<User> qs, User entity) throws ResultException {
         if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
-            throw RestletException.forbidden("not allow to update password in batch.");
+            throw ResultException.forbidden("not allow to update password in batch.");
         }
         return entity;
     }
 
     @Override
-    public User postSelect(User entity) throws RestletException {
+    public User postSelect(User entity) throws ResultException {
         QueryWrapper<Permission> qw1 = new QueryWrapper<>();
         qw1.inSql("id", "SELECT permission_id FROM builtin_user_permissions WHERE user_id = " + entity.getId());
         entity.setPermissions(permissionMapper.selectList(qw1).toArray(new Permission[0]));
@@ -77,12 +77,12 @@ public class UserController extends BaseController<User, UserService> {
     }
 
     @Override
-    public void postInsert(User entity) throws RestletException {
+    public void postInsert(User entity) throws ResultException {
         super.postInsert(entity);
     }
 
     @Override
-    public void postUpdate(Serializable id, User entity) throws RestletException {
+    public void postUpdate(Serializable id, User entity) throws ResultException {
         super.postUpdate(id, entity);
     }
 }
