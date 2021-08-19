@@ -1,8 +1,11 @@
 package plus.extvos.auth.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.sql.Timestamp;
 
@@ -28,6 +31,7 @@ public class UserRole {
      * updated / 更新时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp updated;
 
     public Long getUserId() {

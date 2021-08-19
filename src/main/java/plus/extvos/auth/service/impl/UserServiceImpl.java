@@ -10,10 +10,13 @@ import plus.extvos.auth.mapper.UserMapper;
 import plus.extvos.auth.mapper.UserPermissionMapper;
 import plus.extvos.auth.mapper.UserRoleMapper;
 import plus.extvos.auth.service.UserService;
+import plus.extvos.common.Validator;
 import plus.extvos.common.exception.ResultException;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * @author Mingcai SHEN
@@ -33,6 +36,32 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     @Override
     public UserMapper getMapper() {
         return myMapper;
+    }
+
+    @Override
+    public boolean parseQuery(String k, Object v, QueryWrapper<?> wrapper) {
+        if (Validator.isEmpty(k) || Validator.isNull(v) || Validator.isEmpty(v.toString())) {
+            return true;
+        }
+        switch (k) {
+            case "role":
+                wrapper.inSql("id", "SELECT user_id FROM builtin_user_roles AS bur JOIN builtin_roles AS br ON br.id = bur.role_id WHERE br.code = '" + v + "'");
+                return true;
+            case "roleId":
+            case "role_id":
+                wrapper.inSql("id", "SELECT user_id FROM builtin_user_roles WHERE role_id = " + v);
+                return true;
+            case "role__in":
+                String ss = Arrays.stream(v.toString().split(",")).map(s -> "'" + s + "'").collect(Collectors.joining(","));
+                wrapper.inSql("id", "SELECT user_id FROM builtin_user_roles AS bur JOIN builtin_roles AS br ON br.id = bur.role_id WHERE br.code IN (" + ss + ")");
+                return true;
+            case "roleId__in":
+            case "role_id__in":
+                wrapper.inSql("id", "SELECT user_id FROM builtin_user_roles WHERE role_id IN (" + v + ")");
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

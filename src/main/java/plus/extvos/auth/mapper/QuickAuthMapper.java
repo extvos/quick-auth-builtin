@@ -18,7 +18,7 @@ public interface QuickAuthMapper {
      * @return User or null
      */
     @Select("SELECT U.id,U.username,U.password,C.cellphone,U.status " +
-        "FROM builtin_users AS U RIGHT JOIN builtin_user_cellphones AS C ON C.id = U.id " +
+        "FROM builtin_users AS U LEFT JOIN builtin_user_cellphones AS C ON C.id = U.id " +
         "WHERE U.username = #{username}")
     @Results(
         {
@@ -39,7 +39,7 @@ public interface QuickAuthMapper {
      * @return User or null
      */
     @Select("SELECT U.id,U.username,U.password,C.cellphone,U.status " +
-        "FROM builtin_users AS U RIGHT JOIN builtin_user_cellphones AS C ON C.id = U.id " +
+        "FROM builtin_users AS U LEFT JOIN builtin_user_cellphones AS C ON C.id = U.id " +
         "WHERE U.id = #{id}")
     @Results(
         {
@@ -59,7 +59,7 @@ public interface QuickAuthMapper {
      * @return User or null
      */
     @Select("SELECT U.id,U.username,U.password,C.cellphone,U.status " +
-        "FROM builtin_users AS U RIGHT JOIN builtin_user_cellphones AS C ON C.id = U.id " +
+        "FROM builtin_users AS U LEFT JOIN builtin_user_cellphones AS C ON C.id = U.id " +
         "WHERE C.cellphone = #{phone}")
     @Results(
         {
@@ -85,8 +85,8 @@ public interface QuickAuthMapper {
         "  SELECT U.id, U.username, U.password, C.cellphone,U.status, " ,
         "         O.provider, O.open_id, O.user_id, O.nickname, O.language, O.city, O.province, O.country, O.avatar_url, O.extras " ,
         "  FROM builtin_users AS U ",
-        "  JOIN builtin_user_open_accounts AS O on O.user_id = U.id ",
-        "  RIGHT JOIN builtin_user_cellphones AS C ON C.id = U.id " ,
+        "  LEFT JOIN builtin_user_open_accounts AS O on O.user_id = U.id ",
+        "  LEFT JOIN builtin_user_cellphones AS C ON C.id = U.id " ,
         "  <choose>",
         "    <when test = \" userId != null \">",
         "      where U.id =#{userId}",

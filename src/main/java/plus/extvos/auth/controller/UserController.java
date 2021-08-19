@@ -7,17 +7,17 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import plus.extvos.auth.entity.Permission;
-import plus.extvos.auth.entity.Role;
-import plus.extvos.auth.entity.User;
-import plus.extvos.auth.mapper.PermissionMapper;
-import plus.extvos.auth.mapper.RoleMapper;
+import plus.extvos.auth.entity.*;
+import plus.extvos.auth.mapper.*;
+import plus.extvos.auth.service.UserRegisterHook;
 import plus.extvos.auth.service.UserService;
 import plus.extvos.restlet.QuerySet;
 import plus.extvos.restlet.controller.BaseController;
 import plus.extvos.common.exception.ResultException;
 
 import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 用户数据表
@@ -39,6 +39,18 @@ public class UserController extends BaseController<User, UserService> {
     @Autowired
     private RoleMapper roleMapper;
 
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    private UserPermissionMapper userPermissionMapper;
+
+    @Autowired
+    private RolePermissionMapper rolePermissionMapper;
+
+    @Autowired(required = false)
+    private UserRegisterHook userRegisterHook;
+
     @Override
     public UserService getService() {
         return myService;
@@ -46,7 +58,12 @@ public class UserController extends BaseController<User, UserService> {
 
     @Override
     public User preInsert(User entity) throws ResultException {
-        throw ResultException.forbidden("not allow to create user directly, use method provided in auth-base.");
+        if (userRegisterHook != null) {
+            if (!userRegisterHook.preRegister(entity.getUsername(), entity.getPassword(), null, UserRegisterHook.ADMIN)) {
+                throw ResultException.forbidden("not allow to create user.");
+            }
+        }
+        return entity;
     }
 
     @Override
@@ -67,17 +84,75 @@ public class UserController extends BaseController<User, UserService> {
 
     @Override
     public User postSelect(User entity) throws ResultException {
-        QueryWrapper<Permission> qw1 = new QueryWrapper<>();
-        qw1.inSql("id", "SELECT permission_id FROM builtin_user_permissions WHERE user_id = " + entity.getId());
-        entity.setPermissions(permissionMapper.selectList(qw1).toArray(new Permission[0]));
-        QueryWrapper<Role> qw2 = new QueryWrapper<>();
-        qw2.inSql("id", "SELECT role_id FROM builtin_user_roles WHERE user_id = " + entity.getId());
-        entity.setRoles(roleMapper.selectList(qw2).toArray(new Role[0]));
+        Map<Long, List<Role>> roleMap = getUserRoles(entity.getId());
+        Map<Long, List<Permission>> permissionMap = getUserPermissions(entity.getId());
+        entity.setRoles(roleMap.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Role[0]));
+        entity.setPermissions(permissionMap.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Permission[0]));
         return super.postSelect(entity);
+    }
+
+    protected Map<Long, List<Role>> getUserRoles(Long... ids) {
+        Map<Long, List<Role>> m = new HashMap<>();
+        if (ids.length < 1) {
+            return m;
+        }
+        QueryWrapper<UserRole> qw1 = new QueryWrapper<>();
+        qw1.in("user_id", Arrays.asList(ids));
+        List<UserRole> urs = userRoleMapper.selectList(qw1);
+        if (urs.size() < 1) {
+            return m;
+        }
+        QueryWrapper<Role> qw2 = new QueryWrapper<>();
+        qw2.in("id", urs.stream().map(UserRole::getRoleId).collect(Collectors.toList()));
+        Map<Integer, Role> roleMap = roleMapper.selectList(qw2).stream().peek(o -> o.setUpdated(null)).peek(o -> o.setCreated(null)).collect(Collectors.toMap(Role::getId, o -> o));
+
+        for (UserRole ur : urs) {
+            List<Role> rs = m.getOrDefault(ur.getUserId(), new LinkedList<>());
+            rs.add(roleMap.get(ur.getRoleId()));
+            m.put(ur.getUserId(), rs);
+        }
+        return m;
+    }
+
+    protected Map<Long, List<Permission>> getUserPermissions(Long... ids) {
+        Map<Long, List<Permission>> m = new HashMap<>();
+        if (ids.length < 1) {
+            return m;
+        }
+        QueryWrapper<UserPermission> qw1 = new QueryWrapper<>();
+        qw1.in("user_id", Arrays.asList(ids));
+        List<UserPermission> urs = userPermissionMapper.selectList(qw1);
+        if (urs.size() < 1) {
+            return m;
+        }
+        QueryWrapper<Permission> qw2 = new QueryWrapper<>();
+        qw2.in("id", urs.stream().map(UserPermission::getPermissionId).collect(Collectors.toList()));
+        Map<Integer, Permission> roleMap = permissionMapper.selectList(qw2).stream().peek(o -> o.setUpdated(null)).peek(o -> o.setCreated(null)).collect(Collectors.toMap(Permission::getId, o -> o));
+        for (UserPermission ur : urs) {
+            List<Permission> rs = m.getOrDefault(ur.getUserId(), new LinkedList<>());
+            rs.add(roleMap.get(ur.getPermissionId()));
+            m.put(ur.getUserId(), rs);
+        }
+        return m;
+    }
+
+    @Override
+    public List<User> postSelect(List<User> entities) throws ResultException {
+        Long[] ids = entities.stream().map(User::getId).toArray(Long[]::new);
+        Map<Long, List<Role>> roleMap = getUserRoles(ids);
+        Map<Long, List<Permission>> permissionMap = getUserPermissions(ids);
+        for (User user : entities) {
+            user.setRoles(roleMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Role[0]));
+            user.setPermissions(permissionMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Permission[0]));
+        }
+        return super.postSelect(entities);
     }
 
     @Override
     public void postInsert(User entity) throws ResultException {
+        if (userRegisterHook != null) {
+            userRegisterHook.postRegister(entity.getId(), UserRegisterHook.ADMIN);
+        }
         super.postInsert(entity);
     }
 

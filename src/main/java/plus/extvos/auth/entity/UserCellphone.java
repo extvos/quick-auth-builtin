@@ -29,14 +29,16 @@ public class UserCellphone {
      * created / 创建时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    @TableField(value = "created")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @TableField(value="created")
     private Timestamp created;
 
     /**
      * updated / 更新时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
-    @TableField(value = "updated")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @TableField(value="updated")
     private Timestamp updated;
 
 

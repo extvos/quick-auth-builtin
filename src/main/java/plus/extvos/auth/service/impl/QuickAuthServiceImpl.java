@@ -50,6 +50,12 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     private RoleMapper roleMapper;
 
     @Autowired
+    private UserPermissionMapper userPermissionMapper;
+
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
+    @Autowired
     private PermissionMapper permissionMapper;
 
     @Autowired
@@ -60,6 +66,9 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
     @Autowired
     QuickAuthMapper quickAuthMapper;
+
+    @Autowired(required = false)
+    private UserRegisterHook userRegisterHook;
 
 
     @Override
@@ -138,19 +147,26 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
-    public Serializable createUserInfo(String username, String password, String[] permissions, String[]
-        roles, Map<String, Object> params) throws ResultException {
+    @Transactional
+    public Serializable createUserInfo(String username, String password, short status, String[] permissions, String[]
+            roles, Map<String, Object> params) throws ResultException {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
+        user.setStatus(status);
         if (params != null) {
-            user.setNickname(params.getOrDefault(OAuthProvider.NICK_NAME_KEY, "username").toString());
-            user.setStatus(Short.parseShort(params.getOrDefault("status", "0").toString()));
+            user.setNickname(params.getOrDefault(OAuthProvider.NICK_NAME_KEY, username).toString());
         }
         userMapper.insert(user);
         if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
             UserCellphone uc = new UserCellphone();
             userCellphoneMapper.insert(new UserCellphone(user.getId(), params.get(OAuthProvider.PHONE_NUMBER_KEY).toString()));
+        }
+        if (permissions != null && permissions.length > 0) {
+            userPermissionMapper.insertUserPermission(user.getId(), permissions);
+        }
+        if (roles != null && roles.length > 0) {
+            userRoleMapper.insertUserRoles(user.getId(), roles);
         }
         return user.getId();
     }
@@ -178,7 +194,18 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 uc.setCellphone(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString());
                 userCellphoneMapper.updateById(uc);
             }
-
+        }
+        if (permissions != null && permissions.length > 0) {
+            QueryWrapper<UserPermission> pqw = new QueryWrapper<>();
+            qw.eq("user_id", user.getId());
+            userPermissionMapper.delete(pqw);
+            userPermissionMapper.insertUserPermission(user.getId(), permissions);
+        }
+        if (roles != null && roles.length > 0) {
+            QueryWrapper<UserRole> pqw = new QueryWrapper<>();
+            qw.eq("user_id", user.getId());
+            userRoleMapper.delete(pqw);
+            userRoleMapper.insertUserRoles(user.getId(), roles);
         }
     }
 
@@ -186,14 +213,21 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     public OAuthInfo resolve(String provider, String openId, Serializable userId, Map<String, Object> params) throws
         ResultException {
         log.debug("resolve:>>> {}, {} ", provider, openId);
-
-        UserOpenAccount uwa = quickAuthMapper.resolve(provider,openId,userId);
+//        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
+        QueryWrapper<UserOpenAccount> qw = new QueryWrapper<>();
+        qw.eq("provider", provider);
+        if (userId != null) {
+            qw.eq("user_id", userId);
+        } else {
+            qw.eq("open_id", openId);
+        }
+        UserOpenAccount uwa = userOpenAccountMapper.selectOne(qw);
         if (null == uwa) {
             return null;
         } else if (!uwa.getOpenId().equals(openId)) {
             throw ResultException.conflict("user '" + userId + "' already linked with '" + uwa.getOpenId() + "'");
         }
-        User user = uwa.getUser();
+        User user = userMapper.selectById(uwa.getUserId());
         if (null == user) {
             return null;
         }
@@ -208,6 +242,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
         extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
         extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
+//        return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), cellphone, extraInfo);
         return new OAuthInfo(uwa.getId(), uwa.getUserId(), uwa.getProvider(), uwa.getOpenId(), extraInfo);
     }
 
@@ -244,17 +279,30 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         if (user == null) {
             log.info("User {} not exists, register now ...", username);
             user = new User();
-            user.setUsername(username);
-            user.setPassword(password == null ? QuickHash.md5().hash(openId).hex() : password);
-            if (params != null) {
-                user.setNickname(params.getOrDefault(OAuthProvider.NICK_NAME_KEY, openId).toString());
+            String[] perms = null;
+            String[] roles = null;
+            Short status = 0;
+//            user.setUsername(username);
+            password = password == null ? QuickHash.md5().hash(openId).hex() : password;
+//            user.setPassword(password == null ? QuickHash.md5().hash(openId).hex() : password);
+//            if (params != null) {
+//                user.setNickname(params.getOrDefault(OAuthProvider.NICK_NAME_KEY, openId).toString());
 //                user.setCellphone(params.getOrDefault(OAuthProvider.PHONE_NUMBER_KEY, "").toString());
+//            }
+            if (userRegisterHook != null) {
+                if (!userRegisterHook.preRegister(username, password, params, UserRegisterHook.OAUTH)) {
+                    throw ResultException.forbidden("not allowed to register user");
+                }
+                perms = userRegisterHook.defaultPermissions(UserRegisterHook.OAUTH);
+                roles = userRegisterHook.defaultRoles(UserRegisterHook.OAUTH);
+                status = userRegisterHook.defaultStatus(UserRegisterHook.OAUTH);
             }
             user.setStatus((short) 1);
-            userMapper.insert(user);
+            Serializable userId = createUserInfo(username, password, status, perms, roles, params);
+//            userMapper.insert(user);
             if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
                 String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
-                userCellphoneMapper.insert(new UserCellphone(user.getId(), cellphone));
+                userCellphoneMapper.insert(new UserCellphone(Long.parseLong(userId.toString()), cellphone));
             }
             user = userMapper.selectOne(qw);
             if (null == user) {
@@ -276,7 +324,15 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
             uwa.setCountry(params.getOrDefault(OAuthProvider.COUNTRY_KEY, "CN").toString());
             uwa.setLanguage(params.getOrDefault(OAuthProvider.LANGUAGE_KEY, "zh-CN").toString());
         }
-        userOpenAccountMapper.insert(uwa);
+        UserOpenAccount userOpenAccount = userOpenAccountMapper.selectOne(new QueryWrapper<UserOpenAccount>()
+                .eq("provider", provider)
+                .eq("user_id", user.getId()));
+        if (userOpenAccount != null) {
+            uwa.setId(userOpenAccount.getId());
+            userOpenAccountMapper.updateById(uwa);
+        } else {
+            userOpenAccountMapper.insert(uwa);
+        }
         Map<String, Object> extraInfo = new HashMap<>();
         UserCellphone uc = userCellphoneMapper.selectById(user.getId());
         String cellphone = uc != null ? uc.getCellphone() : null;

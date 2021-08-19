@@ -46,12 +46,14 @@ public class User {
      * created / 创建时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp created;
 
     /**
      * updated / 更新时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp updated;
 
 

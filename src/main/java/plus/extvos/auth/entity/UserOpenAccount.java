@@ -3,6 +3,7 @@ package plus.extvos.auth.entity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.sql.Timestamp;
 import java.util.Map;
@@ -91,6 +92,7 @@ public class UserOpenAccount {
      * created / 创建时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(value = "created")
     private Timestamp created;
 
@@ -98,6 +100,7 @@ public class UserOpenAccount {
      * updated / 更新时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(value = "updated")
     private Timestamp updated;
 
