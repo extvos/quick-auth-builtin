@@ -281,7 +281,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
             user = new User();
             String[] perms = null;
             String[] roles = null;
-            Short status = 0;
+            short status = 0;
 //            user.setUsername(username);
             password = password == null ? QuickHash.md5().hash(openId).hex() : password;
 //            user.setPassword(password == null ? QuickHash.md5().hash(openId).hex() : password);
@@ -296,14 +296,16 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 perms = userRegisterHook.defaultPermissions(UserRegisterHook.OAUTH);
                 roles = userRegisterHook.defaultRoles(UserRegisterHook.OAUTH);
                 status = userRegisterHook.defaultStatus(UserRegisterHook.OAUTH);
+            } else{
+                status = 1;
             }
-            user.setStatus((short) 1);
+//            user.setStatus((short) 1);
             Serializable userId = createUserInfo(username, password, status, perms, roles, params);
 //            userMapper.insert(user);
-            if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
-                String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
-                userCellphoneMapper.insert(new UserCellphone(Long.parseLong(userId.toString()), cellphone));
-            }
+//            if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
+//                String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
+//                userCellphoneMapper.insert(new UserCellphone(Long.parseLong(userId.toString()), cellphone));
+//            }
             user = userMapper.selectOne(qw);
             if (null == user) {
                 throw ResultException.internalServerError("register user failed");
