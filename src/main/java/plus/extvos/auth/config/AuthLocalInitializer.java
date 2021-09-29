@@ -38,16 +38,17 @@ public class AuthLocalInitializer implements ApplicationRunner {
         log.info("AuthLocalInitializer::run:> ...");
         DatabaseHelper dh = DatabaseHelper.with(dataSource);
         String[] tableNames = new String[]{
-            User.class.getAnnotation(TableName.class).value(),
-            Role.class.getAnnotation(TableName.class).value(),
-            Permission.class.getAnnotation(TableName.class).value(),
-            UserPermission.class.getAnnotation(TableName.class).value(),
-            UserRole.class.getAnnotation(TableName.class).value(),
-            RolePermission.class.getAnnotation(TableName.class).value(),
-            UserOpenAccount.class.getAnnotation(TableName.class).value(),
-            UserCellphone.class.getAnnotation(TableName.class).value(),
+                User.class.getAnnotation(TableName.class).value(),
+                Role.class.getAnnotation(TableName.class).value(),
+                Permission.class.getAnnotation(TableName.class).value(),
+                UserPermission.class.getAnnotation(TableName.class).value(),
+                UserRole.class.getAnnotation(TableName.class).value(),
+                RolePermission.class.getAnnotation(TableName.class).value(),
+                UserOpenAccount.class.getAnnotation(TableName.class).value(),
+                UserCellphone.class.getAnnotation(TableName.class).value(),
+                UserEmail.class.getAnnotation(TableName.class).value(),
         };
-        if(dh.tableAbsent(tableNames)>0){
+        if (dh.tableAbsent(tableNames) > 0) {
             dh.runScriptsIfMySQL("sql/mysql/0.auth-schema.sql");
             dh.runScriptsIfPostgreSQL("sql/pg/0.auth-schema.sql");
         }

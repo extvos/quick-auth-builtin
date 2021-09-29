@@ -73,6 +73,26 @@ public interface QuickAuthMapper {
     User getUserByPhone(@Param("phone") String phone);
 
     /**
+     * Get user by email
+     *
+     * @param email as String
+     * @return User or null
+     */
+    @Select("SELECT U.id,U.username,U.password,C.email,U.status " +
+            "FROM builtin_users AS U LEFT JOIN builtin_user_emails AS C ON C.id = U.id " +
+            "WHERE C.email = #{email}")
+    @Results(
+            {
+                    @Result(property = "id", column = "id", id = true),
+                    @Result(property = "username", column = "username"),
+                    @Result(property = "password", column = "password"),
+                    @Result(property = "email", column = "email"),
+                    @Result(property = "status", column = "status")
+            }
+    )
+    User getUserByEmail(@Param("email") String email);
+
+    /**
      * Resolve user by open account
      *
      * @param provider slug

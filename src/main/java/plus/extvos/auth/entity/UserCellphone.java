@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.sql.Timestamp;
 
 /**
- * 用户微信关联账号
+ * 用户手机关联账号
  * @author Mingcai SHEN
  */
 @TableName("builtin_user_cellphones")

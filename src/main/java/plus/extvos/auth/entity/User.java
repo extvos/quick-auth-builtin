@@ -75,6 +75,13 @@ public class User {
     @TableField(exist = false)
     private String cellphone;
 
+    /**
+     * email / 邮箱
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @TableField(exist = false)
+    private String email;
+
     @TableField(exist = false)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String,UserOpenAccount> openAccounts;
@@ -149,6 +156,14 @@ public class User {
 
     public void setCellphone(String cellphone) {
         this.cellphone = cellphone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Map<String, UserOpenAccount> getOpenAccounts() {

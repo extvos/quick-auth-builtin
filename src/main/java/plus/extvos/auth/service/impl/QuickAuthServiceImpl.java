@@ -120,6 +120,22 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
+    public UserInfo getUserByEmail(String email, boolean checkEnabled) throws ResultException {
+        User u = quickAuthMapper.getUserByEmail(email);
+        if (null == u) {
+            return null;
+        } else if (checkEnabled && u.getStatus() < 1) {
+            if (u.getStatus() == 0) {
+                throw ResultException.forbidden("user not activated");
+            } else {
+                throw ResultException.forbidden("user was locked");
+            }
+        } else {
+            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
+        }
+    }
+
+    @Override
     public List<RoleInfo> getRoles(Serializable id) throws ResultException {
         QueryWrapper<Role> qw = new QueryWrapper<>();
         qw.select("code", "name");
@@ -173,7 +189,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
     @Override
     public void updateUserInfo(String username, String password, String[] permissions, String[]
-        roles, Map<String, Object> params) throws ResultException {
+            roles, Map<String, Object> params) throws ResultException {
         User user = new User();
         if (password != null && !password.isEmpty()) {
             user.setPassword(password);
@@ -211,7 +227,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
     @Override
     public OAuthInfo resolve(String provider, String openId, Serializable userId, Map<String, Object> params) throws
-        ResultException {
+            ResultException {
         log.debug("resolve:>>> {}, {} ", provider, openId);
 //        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         QueryWrapper<UserOpenAccount> qw = new QueryWrapper<>();
@@ -249,7 +265,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public OAuthInfo register(String provider, String openId, String username, String
-        password, Map<String, Object> params) throws ResultException {
+            password, Map<String, Object> params) throws ResultException {
 //        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         QueryWrapper<User> qw = new QueryWrapper<>();
         Assert.notEmpty(openId, ResultException.badRequest("openId required"));
@@ -268,11 +284,11 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
             String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
             UserCellphone userCellphone = userCellphoneMapper.selectOne(new QueryWrapper<UserCellphone>().eq("cellphone", cellphone));
-            if(userCellphone != null){
+            if (userCellphone != null) {
                 user = userMapper.selectOne(new QueryWrapper<User>().eq("id", userCellphone.getId()));
             }
         }
-        if(user == null){
+        if (user == null) {
             qw.eq("username", username);
             user = userMapper.selectOne(qw);
         }
@@ -296,7 +312,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 perms = userRegisterHook.defaultPermissions(UserRegisterHook.OAUTH);
                 roles = userRegisterHook.defaultRoles(UserRegisterHook.OAUTH);
                 status = userRegisterHook.defaultStatus(UserRegisterHook.OAUTH);
-            } else{
+            } else {
                 status = 1;
             }
 //            user.setStatus((short) 1);
@@ -423,8 +439,8 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         }
 
         if (params.containsKey(OAuthProvider.PHONE_NUMBER_KEY)
-            && params.get(OAuthProvider.PHONE_NUMBER_KEY) != null
-            && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
+                && params.get(OAuthProvider.PHONE_NUMBER_KEY) != null
+                && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
             UserCellphone uc = userCellphoneMapper.selectById(uwa.getUserId());
             if (null == uc) {
                 userCellphoneMapper.insert(new UserCellphone(uwa.getUserId(), params.get(OAuthProvider.PHONE_NUMBER_KEY).toString()));
