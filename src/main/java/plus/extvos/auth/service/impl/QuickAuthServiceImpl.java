@@ -163,7 +163,26 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
-    @Transactional
+    public UserInfo fillUserInfo(UserInfo userInfo) throws ResultException {
+        if (null != userInfo && null != userInfo.getUserId()) {
+            List<RoleInfo> roles = getRoles(userInfo.getUserId());
+            List<String> roleCodes = new LinkedList<>();
+            roles.forEach(role -> {
+                roleCodes.add(role.getCode());
+            });
+            List<PermissionInfo> perms = getPermissions(userInfo.getUserId());
+            List<String> permCodes = new LinkedList<>();
+            perms.forEach(role -> {
+                permCodes.add(role.getCode());
+            });
+            userInfo.setRoles(roleCodes.toArray(new String[0]));
+            userInfo.setPermissions(permCodes.toArray(new String[0]));
+        }
+        return userInfo;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public Serializable createUserInfo(String username, String password, short status, String[] permissions, String[]
             roles, Map<String, Object> params) throws ResultException {
         User user = new User();
