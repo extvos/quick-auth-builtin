@@ -83,7 +83,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 throw new ResultException(AuthCode.ACCOUNT_LOCKED, "user locked");
             }
         } else {
-            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
+            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone(), u.getEmail());
         }
     }
 
@@ -99,7 +99,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 throw ResultException.forbidden("user was locked");
             }
         } else {
-            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
+            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone(), u.getEmail());
         }
     }
 
@@ -115,7 +115,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 throw ResultException.forbidden("user was locked");
             }
         } else {
-            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
+            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone(), u.getEmail());
         }
     }
 
@@ -131,7 +131,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 throw ResultException.forbidden("user was locked");
             }
         } else {
-            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone());
+            return new UserInfo(u.getId(), u.getUsername(), u.getPassword(), u.getCellphone(), u.getEmail());
         }
     }
 
