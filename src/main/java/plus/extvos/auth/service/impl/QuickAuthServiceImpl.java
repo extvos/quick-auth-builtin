@@ -248,7 +248,6 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     public OAuthInfo resolve(String provider, String openId, Serializable userId, Map<String, Object> params) throws
             ResultException {
         log.debug("resolve:>>> {}, {} ", provider, openId);
-//        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         QueryWrapper<UserOpenAccount> qw = new QueryWrapper<>();
         qw.eq("provider", provider);
         if (userId != null) {
@@ -277,7 +276,6 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
         extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
         extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
-//        return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), cellphone, extraInfo);
         return new OAuthInfo(uwa.getId(), uwa.getUserId(), uwa.getProvider(), uwa.getOpenId(), extraInfo);
     }
 
@@ -285,7 +283,6 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     @Transactional(rollbackFor = Exception.class)
     public OAuthInfo register(String provider, String openId, String username, String
             password, Map<String, Object> params) throws ResultException {
-//        Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         QueryWrapper<User> qw = new QueryWrapper<>();
         Assert.notEmpty(openId, ResultException.badRequest("openId required"));
         QueryWrapper<UserOpenAccount> qwu = new QueryWrapper<>();
