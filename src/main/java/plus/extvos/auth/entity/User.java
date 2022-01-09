@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.sql.Timestamp;
+import java.util.Map;
 
 /**
  * 用户数据表
@@ -45,12 +46,14 @@ public class User {
      * created / 创建时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp created;
 
     /**
      * updated / 更新时间
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp updated;
 
 
@@ -66,8 +69,23 @@ public class User {
     private Role[] roles;
 
     /**
-     *
+     * cellphone / 手机号码
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @TableField(exist = false)
+    private String cellphone;
+
+    /**
+     * email / 邮箱
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @TableField(exist = false)
+    private String email;
+
+    @TableField(exist = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Map<String,UserOpenAccount> openAccounts;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @TableField(exist = false)
     private Integer[] permissionIds;
@@ -130,6 +148,30 @@ public class User {
 
     public void setUpdated(Timestamp updated) {
         this.updated = updated;
+    }
+
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Map<String, UserOpenAccount> getOpenAccounts() {
+        return openAccounts;
+    }
+
+    public void setOpenAccounts(Map<String, UserOpenAccount> openAccounts) {
+        this.openAccounts = openAccounts;
     }
 
     public Integer[] getRoleIds() {

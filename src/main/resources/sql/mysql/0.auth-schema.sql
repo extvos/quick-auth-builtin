@@ -128,6 +128,18 @@ CREATE TABLE IF NOT EXISTS `builtin_user_cellphones` (
 )  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户手机关联账号';
 -- 数据导出被取消选择。
 
+-- 导出  表 builtin_user_emails 结构
+CREATE TABLE IF NOT EXISTS `builtin_user_emails` (
+	`id` BIGINT(20) NOT NULL COMMENT '用户ID',
+    `email` varchar(128) NOT NULL COMMENT '邮件地址',
+	`created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+	`updated` DATETIME NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE INDEX `email` (`email`) USING BTREE,
+	CONSTRAINT `builtin_user_emails_ibfk_1` FOREIGN KEY (`id`) REFERENCES `builtin_users` (`id`) ON UPDATE RESTRICT ON DELETE RESTRICT
+)  ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户邮件关联账号';
+-- 数据导出被取消选择。
+
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
