@@ -11,9 +11,9 @@ import plus.extvos.auth.entity.*;
 import plus.extvos.auth.mapper.*;
 import plus.extvos.auth.service.UserRegisterHook;
 import plus.extvos.auth.service.UserService;
+import plus.extvos.common.exception.ResultException;
 import plus.extvos.restlet.QuerySet;
 import plus.extvos.restlet.controller.BaseController;
-import plus.extvos.common.exception.ResultException;
 
 import java.io.Serializable;
 import java.util.*;
@@ -47,6 +47,15 @@ public class UserController extends BaseController<User, UserService> {
 
     @Autowired
     private RolePermissionMapper rolePermissionMapper;
+
+    @Autowired
+    private UserEmailMapper userEmailMapper;
+
+    @Autowired
+    private UserCellphoneMapper userCellphoneMapper;
+
+    @Autowired
+    private UserOpenAccountMapper userOpenAccountMapper;
 
     @Autowired(required = false)
     private UserRegisterHook userRegisterHook;
@@ -86,9 +95,71 @@ public class UserController extends BaseController<User, UserService> {
     public User postSelect(User entity) throws ResultException {
         Map<Long, List<Role>> roleMap = getUserRoles(entity.getId());
         Map<Long, List<Permission>> permissionMap = getUserPermissions(entity.getId());
+        Map<Long, String> emailMap = getUserEmails(entity.getId());
+        Map<Long, String> phoneMap = getUserCellphones(entity.getId());
+        Map<Long, Map<String, UserOpenAccount>> openAccounts = getUserOpenAccounts(entity.getId());
+        entity.setOpenAccounts(openAccounts.getOrDefault(entity.getId(), null));
+        entity.setEmail(emailMap.getOrDefault(entity.getId(), null));
+        entity.setCellphone(phoneMap.getOrDefault(entity.getId(), null));
         entity.setRoles(roleMap.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Role[0]));
         entity.setPermissions(permissionMap.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Permission[0]));
         return super.postSelect(entity);
+    }
+
+    protected Map<Long, Map<String, UserOpenAccount>> getUserOpenAccounts(Long... ids) {
+        Map<Long, Map<String, UserOpenAccount>> m = new HashMap<>();
+        if (ids.length < 1) {
+            return m;
+        }
+
+        QueryWrapper<UserOpenAccount> qw1 = new QueryWrapper<>();
+        qw1.in("user_id", Arrays.asList(ids));
+        List<UserOpenAccount> urs = userOpenAccountMapper.selectList(qw1);
+        if (urs.size() < 1) {
+            return m;
+        }
+        for (UserOpenAccount ur : urs) {
+            Map<String, UserOpenAccount> uom = m.getOrDefault(ur.getUserId(), new HashMap<>());
+            uom.put(ur.getProvider(), ur);
+            m.put(ur.getId(), uom);
+        }
+        return m;
+    }
+
+    protected Map<Long, String> getUserEmails(Long... ids) {
+        Map<Long, String> m = new HashMap<>();
+        if (ids.length < 1) {
+            return m;
+        }
+
+        QueryWrapper<UserEmail> qw1 = new QueryWrapper<>();
+        qw1.in("id", Arrays.asList(ids));
+        List<UserEmail> urs = userEmailMapper.selectList(qw1);
+        if (urs.size() < 1) {
+            return m;
+        }
+        for (UserEmail ur : urs) {
+            m.put(ur.getId(), ur.getEmail());
+        }
+        return m;
+    }
+
+    protected Map<Long, String> getUserCellphones(Long... ids) {
+        Map<Long, String> m = new HashMap<>();
+        if (ids.length < 1) {
+            return m;
+        }
+
+        QueryWrapper<UserCellphone> qw1 = new QueryWrapper<>();
+        qw1.in("id", Arrays.asList(ids));
+        List<UserCellphone> urs = userCellphoneMapper.selectList(qw1);
+        if (urs.size() < 1) {
+            return m;
+        }
+        for (UserCellphone ur : urs) {
+            m.put(ur.getId(), ur.getCellphone());
+        }
+        return m;
     }
 
     protected Map<Long, List<Role>> getUserRoles(Long... ids) {
@@ -141,7 +212,11 @@ public class UserController extends BaseController<User, UserService> {
         Long[] ids = entities.stream().map(User::getId).toArray(Long[]::new);
         Map<Long, List<Role>> roleMap = getUserRoles(ids);
         Map<Long, List<Permission>> permissionMap = getUserPermissions(ids);
+        Map<Long, String> emailMap = getUserEmails(ids);
+        Map<Long, String> phoneMap = getUserCellphones(ids);
         for (User user : entities) {
+            user.setEmail(emailMap.getOrDefault(user.getId(), null));
+            user.setCellphone(phoneMap.getOrDefault(user.getId(), null));
             user.setRoles(roleMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Role[0]));
             user.setPermissions(permissionMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Permission[0]));
         }

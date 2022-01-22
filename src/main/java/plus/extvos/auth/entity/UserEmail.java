@@ -9,7 +9,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.sql.Timestamp;
 
 /**
- *  用户邮件地址关联账号
+ * 用户邮件地址关联账号
+ *
  * @author shenmc
  */
 @TableName("builtin_user_emails")
@@ -30,7 +31,7 @@ public class UserEmail {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @TableField(value="created")
+    @TableField(value = "created")
     private Timestamp created;
 
     /**
@@ -38,13 +39,22 @@ public class UserEmail {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @TableField(value="updated")
+    @TableField(value = "updated")
     private Timestamp updated;
 
 
     @JsonIgnore
     @TableField(exist = false)
     private User user;
+
+    public UserEmail(){
+
+    }
+
+    public UserEmail(Long id, String email) {
+        this.id = id;
+        this.email = email;
+    }
 
     public Long getId() {
         return id;

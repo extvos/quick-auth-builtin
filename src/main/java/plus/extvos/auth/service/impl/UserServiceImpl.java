@@ -3,12 +3,8 @@ package plus.extvos.auth.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import plus.extvos.auth.entity.User;
-import plus.extvos.auth.entity.UserPermission;
-import plus.extvos.auth.entity.UserRole;
-import plus.extvos.auth.mapper.UserMapper;
-import plus.extvos.auth.mapper.UserPermissionMapper;
-import plus.extvos.auth.mapper.UserRoleMapper;
+import plus.extvos.auth.entity.*;
+import plus.extvos.auth.mapper.*;
 import plus.extvos.auth.service.UserService;
 import plus.extvos.common.Validator;
 import plus.extvos.common.exception.ResultException;
@@ -32,6 +28,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
 
     @Autowired
     private UserPermissionMapper userPermissionMapper;
+
+    @Autowired
+    private UserEmailMapper userEmailMapper;
+
+    @Autowired
+    private UserCellphoneMapper userCellphoneMapper;
+
+    @Autowired
+    private UserOpenAccountMapper userOpenAccountMapper;
 
     @Override
     public UserMapper getMapper() {
@@ -81,6 +86,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
                 userRoleMapper.insert(ur);
             }
         }
+        if (null != entity.getEmail()) {
+            userEmailMapper.insert(new UserEmail(entity.getId(), entity.getEmail()));
+        }
+        if (null != entity.getCellphone()) {
+            userCellphoneMapper.insert(new UserCellphone(entity.getId(), entity.getCellphone()));
+        }
         return ret;
     }
 
@@ -106,6 +117,20 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             for (Integer rid : roleIds) {
                 UserRole ur = new UserRole(entity.getId(), rid);
                 userRoleMapper.insert(ur);
+            }
+        }
+        if (null != entity.getEmail()) {
+            if (null == userEmailMapper.selectById(entity.getId())) {
+                userEmailMapper.insert(new UserEmail(entity.getId(), entity.getEmail()));
+            } else {
+                userEmailMapper.updateById(new UserEmail(entity.getId(), entity.getEmail()));
+            }
+        }
+        if (null != entity.getCellphone()) {
+            if (null == userCellphoneMapper.selectById(entity.getId())) {
+                userCellphoneMapper.insert(new UserCellphone(entity.getId(), entity.getEmail()));
+            } else {
+                userCellphoneMapper.updateById(new UserCellphone(entity.getId(), entity.getEmail()));
             }
         }
         return ret;
