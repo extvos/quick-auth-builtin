@@ -128,9 +128,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
         }
         if (null != entity.getCellphone()) {
             if (null == userCellphoneMapper.selectById(entity.getId())) {
-                userCellphoneMapper.insert(new UserCellphone(entity.getId(), entity.getEmail()));
+                userCellphoneMapper.insert(new UserCellphone(entity.getId(), entity.getCellphone()));
             } else {
-                userCellphoneMapper.updateById(new UserCellphone(entity.getId(), entity.getEmail()));
+                userCellphoneMapper.updateById(new UserCellphone(entity.getId(), entity.getCellphone()));
             }
         }
         return ret;
