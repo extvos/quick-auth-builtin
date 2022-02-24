@@ -1,6 +1,7 @@
 package plus.extvos.auth.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import plus.extvos.auth.entity.UserEmail;
 import plus.extvos.auth.mapper.UserEmailMapper;
 import plus.extvos.auth.service.UserEmailService;
@@ -9,6 +10,7 @@ import plus.extvos.restlet.service.impl.BaseServiceImpl;
 /**
  * @author shenmc
  */
+@Service
 public class UserEmailServiceImpl extends BaseServiceImpl<UserEmailMapper, UserEmail> implements UserEmailService {
     @Autowired
     private UserEmailMapper myMapper;

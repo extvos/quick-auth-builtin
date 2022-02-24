@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import plus.extvos.auth.entity.Permission;
 import plus.extvos.auth.entity.Role;
-import plus.extvos.auth.mapper.PermissionMapper;
+import plus.extvos.auth.service.PermissionService;
 import plus.extvos.auth.service.RoleService;
-import plus.extvos.restlet.controller.BaseController;
 import plus.extvos.common.exception.ResultException;
+import plus.extvos.restlet.controller.BaseController;
 
 import java.io.Serializable;
 
@@ -31,7 +31,7 @@ public class RoleController extends BaseController<Role, RoleService> {
     private RoleService myService;
 
     @Autowired
-    private PermissionMapper permissionMapper;
+    private PermissionService permissionService;
 
     @Override
     public RoleService getService() {
@@ -53,7 +53,7 @@ public class RoleController extends BaseController<Role, RoleService> {
     public Role postSelect(Role entity) throws ResultException {
         QueryWrapper<Permission> qw = new QueryWrapper<>();
         qw.inSql("id", "SELECT permission_id FROM builtin_role_permissions WHERE role_id = " + entity.getId());
-        entity.setPermissions(permissionMapper.selectList(qw).toArray(new Permission[0]));
+        entity.setPermissions(permissionService.selectByWrapper(qw).toArray(new Permission[0]));
         return super.postSelect(entity);
     }
 }
