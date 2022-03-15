@@ -15,6 +15,7 @@ import plus.extvos.common.exception.ResultException;
 import plus.extvos.restlet.controller.BaseController;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 角色数据表
@@ -55,5 +56,10 @@ public class RoleController extends BaseController<Role, RoleService> {
         qw.inSql("id", "SELECT permission_id FROM builtin_role_permissions WHERE role_id = " + entity.getId());
         entity.setPermissions(permissionService.selectByWrapper(qw).toArray(new Permission[0]));
         return super.postSelect(entity);
+    }
+
+    @Override
+    public List<Role> postSelect(List<Role> entities) throws ResultException {
+        return super.postSelect(entities);
     }
 }
