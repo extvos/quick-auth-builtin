@@ -191,6 +191,8 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         user.setStatus(status);
         if (params != null) {
             user.setNickname(params.getOrDefault(OAuthProvider.NICK_NAME_KEY, username).toString());
+        } else {
+            user.setNickname(username);
         }
         userMapper.insert(user);
         if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
