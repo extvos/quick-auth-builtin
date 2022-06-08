@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import plus.extvos.auth.config.QuickAuthConfig;
 import plus.extvos.auth.dto.OAuthInfo;
 import plus.extvos.auth.dto.PermissionInfo;
 import plus.extvos.auth.dto.RoleInfo;
@@ -69,6 +70,9 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
 
     @Autowired(required = false)
     private UserRegisterHook userRegisterHook;
+
+    @Autowired
+    private QuickAuthConfig authConfig;
 
 
     @Override
@@ -331,7 +335,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 roles = userRegisterHook.defaultRoles(UserRegisterHook.OAUTH);
                 status = userRegisterHook.defaultStatus(UserRegisterHook.OAUTH);
             } else {
-                status = 1;
+                status = authConfig.getDefaultStatus();
             }
 //            user.setStatus((short) 1);
             Serializable userId = createUserInfo(username, password, status, perms, roles, params);
