@@ -7,6 +7,8 @@ import plus.extvos.auth.mapper.RolePermissionMapper;
 import plus.extvos.auth.service.RolePermissionService;
 import plus.extvos.restlet.service.impl.BaseServiceImpl;
 
+import java.util.List;
+
 /**
  * 角色权限关联表
  *
@@ -20,5 +22,10 @@ public class RolePermissionServiceImpl extends BaseServiceImpl<RolePermissionMap
     @Override
     public RolePermissionMapper getMapper() {
         return myMapper;
+    }
+
+    @Override
+    public List<RolePermission> getPermissionsByRoles(List<Integer> roleIds) {
+        return myMapper.getPermissionsByRoles(roleIds);
     }
 }

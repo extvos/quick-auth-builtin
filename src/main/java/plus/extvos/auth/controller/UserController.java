@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import plus.extvos.auth.entity.*;
-import plus.extvos.auth.mapper.*;
 import plus.extvos.auth.service.*;
+import plus.extvos.auth.utils.SessionUtil;
 import plus.extvos.common.exception.ResultException;
 import plus.extvos.restlet.QuerySet;
 import plus.extvos.restlet.controller.BaseController;
@@ -208,12 +208,14 @@ public class UserController extends BaseController<User, UserService> {
 
     @Override
     public List<User> postSelect(List<User> entities) throws ResultException {
+        String currentUsername = SessionUtil.currentUsername();
         Long[] ids = entities.stream().map(User::getId).toArray(Long[]::new);
         Map<Long, List<Role>> roleMap = getUserRoles(ids);
         Map<Long, List<Permission>> permissionMap = getUserPermissions(ids);
         Map<Long, String> emailMap = getUserEmails(ids);
         Map<Long, String> phoneMap = getUserCellphones(ids);
         for (User user : entities) {
+            user.setIsSelf(user.getUsername().equals(currentUsername));
             user.setEmail(emailMap.getOrDefault(user.getId(), null));
             user.setCellphone(phoneMap.getOrDefault(user.getId(), null));
             user.setRoles(roleMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Role[0]));

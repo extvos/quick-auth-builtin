@@ -1,8 +1,6 @@
 package plus.extvos.auth.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -34,6 +32,14 @@ public class UserRole {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp updated;
 
+    @TableField(exist = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Role role;
+
+    @TableField(exist = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private User user;
+
     public Long getUserId() {
         return userId;
     }
@@ -56,6 +62,22 @@ public class UserRole {
 
     public void setUpdated(Timestamp updated) {
         this.updated = updated;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public UserRole(Long userId, Integer roleId) {

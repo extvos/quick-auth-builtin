@@ -83,6 +83,17 @@ public class User {
     private String email;
 
     @TableField(exist = false)
+    private Boolean isSelf;
+
+    public Boolean getIsSelf() {
+        return isSelf;
+    }
+
+    public void setIsSelf(Boolean isSelf) {
+        this.isSelf = isSelf;
+    }
+
+    @TableField(exist = false)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String,UserOpenAccount> openAccounts;
 

@@ -34,6 +34,9 @@ public class RoleController extends BaseController<Role, RoleService> {
     @Autowired
     private PermissionService permissionService;
 
+//    @Autowired
+//    private RolePermissionService rolePermissionService;
+
     @Override
     public RoleService getService() {
         return myService;
@@ -60,6 +63,27 @@ public class RoleController extends BaseController<Role, RoleService> {
 
     @Override
     public List<Role> postSelect(List<Role> entities) throws ResultException {
+//        List<Integer> roleIds = new ArrayList<>();
+//        entities.forEach(e -> roleIds.add(e.getId()));
+//        Map<Integer, List<Permission>> rolePerms = new HashMap<>();
+//        List<RolePermission> rpms = rolePermissionService.getPermissionsByRoles(roleIds);
+//        rpms.forEach(rp -> {
+//            List<Permission> lp;
+//            if (rolePerms.containsKey(rp.getRoleId())) {
+//                lp = rolePerms.get(rp.getRoleId());
+//            } else {
+//                lp = new ArrayList<>();
+//            }
+//            lp.add(rp.getPermission());
+//            rolePerms.put(rp.getRoleId(), lp);
+//        });
+//        entities.forEach(e -> {
+//            if (rolePerms.containsKey(e.getId())) {
+//                List<Permission> lp = rolePerms.get(e.getId());
+//                Permission[] perms = new Permission[lp.size()];
+//                e.setPermissions(perms);
+//            }
+//        });
         return super.postSelect(entities);
     }
 }

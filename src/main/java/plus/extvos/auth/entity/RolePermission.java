@@ -31,6 +31,31 @@ public class RolePermission {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Timestamp updated;
 
+
+    @TableField(exist = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Role role;
+
+    @TableField(exist = false)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Permission permission;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Permission getPermission() {
+        return permission;
+    }
+
+    public void setPermission(Permission permission) {
+        this.permission = permission;
+    }
+
     public Integer getRoleId() {
         return roleId;
     }
