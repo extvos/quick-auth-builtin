@@ -92,16 +92,21 @@ public class UserController extends BaseController<User, UserService> {
 
     @Override
     public User postSelect(User entity) throws ResultException {
+        String currentUsername = SessionUtil.currentUsername();
         Map<Long, List<Role>> roleMap = getUserRoles(entity.getId());
         Map<Long, List<Permission>> permissionMap = getUserPermissions(entity.getId());
         Map<Long, String> emailMap = getUserEmails(entity.getId());
         Map<Long, String> phoneMap = getUserCellphones(entity.getId());
         Map<Long, Map<String, UserOpenAccount>> openAccounts = getUserOpenAccounts(entity.getId());
-        entity.setOpenAccounts(openAccounts.getOrDefault(entity.getId(), null));
+        entity.setIsSelf(entity.getUsername().equals(currentUsername));
         entity.setEmail(emailMap.getOrDefault(entity.getId(), null));
         entity.setCellphone(phoneMap.getOrDefault(entity.getId(), null));
-        entity.setRoles(roleMap.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Role[0]));
-        entity.setPermissions(permissionMap.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Permission[0]));
+        Role[] roles = roleMap.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Role[0]);
+        entity.setRoles(roles);
+        entity.setRoleIds(Arrays.stream(roles).map(Role::getId).toArray(Integer[]::new));
+        Permission[] perms = permissionMap.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Permission[0]);
+        entity.setPermissions(perms);
+        entity.setPermissionIds(Arrays.stream(perms).map(Permission::getId).toArray(Integer[]::new));
         return super.postSelect(entity);
     }
 
@@ -218,8 +223,12 @@ public class UserController extends BaseController<User, UserService> {
             user.setIsSelf(user.getUsername().equals(currentUsername));
             user.setEmail(emailMap.getOrDefault(user.getId(), null));
             user.setCellphone(phoneMap.getOrDefault(user.getId(), null));
-            user.setRoles(roleMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Role[0]));
-            user.setPermissions(permissionMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Permission[0]));
+            Role[] roles = roleMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Role[0]);
+            user.setRoles(roles);
+            user.setRoleIds(Arrays.stream(roles).map(Role::getId).toArray(Integer[]::new));
+            Permission[] perms = permissionMap.getOrDefault(user.getId(), new LinkedList<>()).toArray(new Permission[0]);
+            user.setPermissions(perms);
+            user.setPermissionIds(Arrays.stream(perms).map(Permission::getId).toArray(Integer[]::new));
         }
         return super.postSelect(entities);
     }

@@ -81,16 +81,20 @@ public class RoleController extends BaseController<Role, RoleService> {
     @Override
     public Role postSelect(Role entity) throws ResultException {
         Map<Integer, List<Permission>> pm = getRolePermissions(entity.getId());
-        entity.setPermissions(pm.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Permission[0]));
+        Permission[] perms = pm.getOrDefault(entity.getId(), new LinkedList<>()).toArray(new Permission[0]);
+        entity.setPermissions(perms);
+        entity.setPermissionIds(Arrays.stream(perms).map(Permission::getId).toArray(Integer[]::new));
         return super.postSelect(entity);
     }
 
     @Override
     public List<Role> postSelect(List<Role> entities) throws ResultException {
         Integer[] ids = entities.stream().map(Role::getId).toArray(Integer[]::new);
-        Map<Integer, List<Permission>> permissionMap = getRolePermissions(ids);
+        Map<Integer, List<Permission>> pm = getRolePermissions(ids);
         entities.forEach(e -> {
-            e.setPermissions(permissionMap.getOrDefault(e.getId(), new LinkedList<>()).toArray(new Permission[0]));
+            Permission[] perms = pm.getOrDefault(e.getId(), new LinkedList<>()).toArray(new Permission[0]);
+            e.setPermissions(perms);
+            e.setPermissionIds(Arrays.stream(perms).map(Permission::getId).toArray(Integer[]::new));
         });
         return super.postSelect(entities);
     }
