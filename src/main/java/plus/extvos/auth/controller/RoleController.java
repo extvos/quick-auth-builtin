@@ -14,9 +14,12 @@ import plus.extvos.auth.service.PermissionService;
 import plus.extvos.auth.service.RolePermissionService;
 import plus.extvos.auth.service.RoleService;
 import plus.extvos.common.exception.ResultException;
+import plus.extvos.restlet.QuerySet;
 import plus.extvos.restlet.controller.BaseController;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,6 +74,18 @@ public class RoleController extends BaseController<Role, RoleService> {
             m.put(ur.getRoleId(), rs);
         }
         return m;
+    }
+
+    @Override
+    public Role preUpdate(Serializable id, Role entity) throws ResultException {
+        entity.setUpdated(Timestamp.valueOf(LocalDateTime.now()));
+        return super.preUpdate(id, entity);
+    }
+
+    @Override
+    public Role preUpdate(QuerySet<Role> qs, Role entity) throws ResultException {
+        entity.setUpdated(Timestamp.valueOf(LocalDateTime.now()));
+        return super.preUpdate(qs, entity);
     }
 
     @Override

@@ -15,6 +15,8 @@ import plus.extvos.restlet.QuerySet;
 import plus.extvos.restlet.controller.BaseController;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,6 +81,7 @@ public class UserController extends BaseController<User, UserService> {
         if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
             entity.setPassword(entity.getPassword());
         }
+        entity.setUpdated(Timestamp.valueOf(LocalDateTime.now()));
         return entity;
     }
 
@@ -87,6 +90,7 @@ public class UserController extends BaseController<User, UserService> {
         if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
             throw ResultException.forbidden("not allow to update password in batch.");
         }
+        entity.setUpdated(Timestamp.valueOf(LocalDateTime.now()));
         return entity;
     }
 
