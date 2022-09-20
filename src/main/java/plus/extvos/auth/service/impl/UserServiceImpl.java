@@ -98,13 +98,14 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
     @Override
     public int updateById(Serializable id, User entity) throws ResultException {
         int ret = super.updateById(id, entity);
+        Long userId = Long.parseLong(id.toString());
         Integer[] permIds = entity.getPermissionIds();
         if (permIds != null) {
             QueryWrapper<UserPermission> qw = new QueryWrapper<>();
             qw.eq("user_id", id);
             userPermissionMapper.delete(qw);
             for (Integer pid : permIds) {
-                UserPermission up = new UserPermission(entity.getId(), pid);
+                UserPermission up = new UserPermission(userId, pid);
                 userPermissionMapper.insert(up);
             }
         }
@@ -115,22 +116,22 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, User> implement
             qw.eq("user_id", id);
             userRoleMapper.delete(qw);
             for (Integer rid : roleIds) {
-                UserRole ur = new UserRole(entity.getId(), rid);
+                UserRole ur = new UserRole(userId, rid);
                 userRoleMapper.insert(ur);
             }
         }
         if (null != entity.getEmail()) {
-            if (null == userEmailMapper.selectById(entity.getId())) {
-                userEmailMapper.insert(new UserEmail(entity.getId(), entity.getEmail()));
+            if (null == userEmailMapper.selectById(userId)) {
+                userEmailMapper.insert(new UserEmail(userId, entity.getEmail()));
             } else {
-                userEmailMapper.updateById(new UserEmail(entity.getId(), entity.getEmail()));
+                userEmailMapper.updateById(new UserEmail(userId, entity.getEmail()));
             }
         }
         if (null != entity.getCellphone()) {
-            if (null == userCellphoneMapper.selectById(entity.getId())) {
-                userCellphoneMapper.insert(new UserCellphone(entity.getId(), entity.getCellphone()));
+            if (null == userCellphoneMapper.selectById(userId)) {
+                userCellphoneMapper.insert(new UserCellphone(userId, entity.getCellphone()));
             } else {
-                userCellphoneMapper.updateById(new UserCellphone(entity.getId(), entity.getCellphone()));
+                userCellphoneMapper.updateById(new UserCellphone(userId, entity.getCellphone()));
             }
         }
         return ret;

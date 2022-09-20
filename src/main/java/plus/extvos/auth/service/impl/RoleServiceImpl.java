@@ -85,7 +85,7 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, Role> implement
             qw.eq("role_id", id);
             rolePermissionMapper.delete(qw);
             for (Integer pid : permIds) {
-                RolePermission rp = new RolePermission(entity.getId(), pid);
+                RolePermission rp = new RolePermission(Integer.parseInt(id.toString()), pid);
                 rolePermissionMapper.insert(rp);
             }
         }
