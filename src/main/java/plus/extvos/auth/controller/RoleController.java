@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Api(tags = {"角色管理"})
 @RestController
 @RequestMapping("/_builtin/auth/role")
-@RequiresPermissions(value = {"*", "admin", "administration"}, logical = Logical.OR)
+@RequiresPermissions(value = {"*", "admin"}, logical = Logical.OR)
 public class RoleController extends BaseController<Role, RoleService> {
 
     @Autowired

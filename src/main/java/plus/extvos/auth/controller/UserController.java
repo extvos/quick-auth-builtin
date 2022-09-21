@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Api(tags = {"用户管理"})
 @RestController
 @RequestMapping("/_builtin/auth/user")
-@RequiresPermissions(value = {"*", "admin", "administration"}, logical = Logical.OR)
+@RequiresPermissions(value = {"*", "admin"}, logical = Logical.OR)
 public class UserController extends BaseController<User, UserService> {
 
     @Autowired

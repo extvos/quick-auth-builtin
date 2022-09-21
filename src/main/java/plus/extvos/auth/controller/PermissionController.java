@@ -18,7 +18,7 @@ import plus.extvos.restlet.controller.BaseController;
 @Api(tags = {"权限管理"})
 @RestController
 @RequestMapping("/_builtin/auth/permission")
-@RequiresPermissions(value = {"*", "admin", "administration"}, logical = Logical.OR)
+@RequiresPermissions(value = {"*", "admin"}, logical = Logical.OR)
 public class PermissionController extends BaseController<Permission, PermissionService> {
 
     @Autowired
