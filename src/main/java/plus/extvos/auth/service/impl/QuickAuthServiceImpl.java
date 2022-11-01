@@ -66,6 +66,9 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     UserCellphoneMapper userCellphoneMapper;
 
     @Autowired
+    UserEmailMapper userEmailMapper;
+
+    @Autowired
     QuickAuthMapper quickAuthMapper;
 
     @Autowired(required = false)
@@ -202,6 +205,11 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
             UserCellphone uc = new UserCellphone();
             userCellphoneMapper.insert(new UserCellphone(user.getId(), params.get(OAuthProvider.PHONE_NUMBER_KEY).toString()));
+        }
+
+        if (params != null && params.containsKey(OAuthProvider.EMAIL) && Validator.notEmpty(params.get(OAuthProvider.EMAIL).toString())) {
+            UserCellphone uc = new UserCellphone();
+            userEmailMapper.insert(new UserEmail(user.getId(), params.get(OAuthProvider.EMAIL).toString()));
         }
         if (permissions != null && permissions.length > 0) {
             userPermissionMapper.insertUserPermission(user.getId(), permissions);
