@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS builtin_permissions (
   updated timestamp(0) DEFAULT CURRENT_TIMESTAMP ,
   PRIMARY KEY (id),
   CONSTRAINT builtin_permissions_uq_code UNIQUE  (code)
-)   ;
+);
 COMMENT ON TABLE builtin_permissions IS '内置系统权限表';
 ALTER SEQUENCE builtin_permissions_seq RESTART WITH 3001;
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS builtin_roles (
   updated timestamp(0) DEFAULT CURRENT_TIMESTAMP ,
   PRIMARY KEY (id),
   CONSTRAINT builtin_roles_uq_code UNIQUE  (code)
-)   ;
+);
 COMMENT ON TABLE builtin_roles IS '内置系统角色表';
 ALTER SEQUENCE builtin_roles_seq RESTART WITH 2001;
 
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS builtin_role_permissions (
  ,
   CONSTRAINT builtin_role_permissions_ibfk_1 FOREIGN KEY (role_id) REFERENCES builtin_roles (id) ON DELETE CASCADE ,
   CONSTRAINT builtin_role_permissions_ibfk_2 FOREIGN KEY (permission_id) REFERENCES builtin_permissions (id) ON DELETE CASCADE 
-)  ;
+);
 COMMENT ON TABLE builtin_role_permissions IS '内置系统角色权限';
 CREATE INDEX IF NOT EXISTS builtin_role_permissions_idx_permission_id ON builtin_role_permissions (permission_id);
 
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS builtin_users (
   updated timestamp(0) DEFAULT CURRENT_TIMESTAMP ,
   PRIMARY KEY (id),
   CONSTRAINT builtin_users_uq_username UNIQUE  (username)
-)   ;
+);
 COMMENT ON TABLE builtin_users IS '内置系统用户';
 
 ALTER SEQUENCE builtin_users_seq RESTART WITH 1001;
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS builtin_user_permissions (
  ,
   CONSTRAINT builtin_user_permissions_ibfk_1 FOREIGN KEY (user_id) REFERENCES builtin_users (id) ON DELETE CASCADE ,
   CONSTRAINT builtin_user_permissions_ibfk_2 FOREIGN KEY (permission_id) REFERENCES builtin_permissions (id) ON DELETE CASCADE 
-)  ;
+);
 
 COMMENT ON TABLE builtin_user_permissions IS '内置系统用户权限';
 CREATE INDEX IF NOT EXISTS builtin_user_permissions_idx_permission_id ON builtin_user_permissions (permission_id);
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS builtin_user_roles (
  ,
   CONSTRAINT builtin_user_roles_ibfk_1 FOREIGN KEY (user_id) REFERENCES builtin_users (id)  ON DELETE CASCADE ,
   CONSTRAINT builtin_user_roles_ibfk_2 FOREIGN KEY (role_id) REFERENCES builtin_roles (id)  ON DELETE CASCADE 
-)  ;
+);
 COMMENT ON TABLE builtin_user_roles IS '内置系统用户角色';
 CREATE INDEX IF NOT EXISTS builtin_user_roles_idx_role_id ON builtin_user_roles (role_id);
 
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS builtin_user_open_accounts (
 	CONSTRAINT builtin_user_open_accounts_uq_open_user UNIQUE  (provider, user_id),
 	CONSTRAINT builtin_user_open_accounts_uq_open_account UNIQUE  (provider, open_id),
 	CONSTRAINT builtin_user_open_accounts_ibfk_1 FOREIGN KEY (user_id) REFERENCES builtin_users (id)  ON DELETE CASCADE 
-)   ;
+);
 COMMENT ON TABLE builtin_user_open_accounts IS '内置系统用户开放账号';
 
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS builtin_user_cellphones (
 	PRIMARY KEY (id),
 	CONSTRAINT builtin_user_cellphones_uq_cellphone UNIQUE  (cellphone),
 	CONSTRAINT builtin_user_cellphones_ibfk_1 FOREIGN KEY (id) REFERENCES builtin_users (id)  ON DELETE CASCADE 
-)   ;
+);
 COMMENT ON TABLE builtin_user_cellphones IS '内置系统用户电话';
 -- SQLINES LICENSE FOR EVALUATION USE ONLY
 CREATE TABLE IF NOT EXISTS builtin_user_emails (
@@ -138,5 +138,5 @@ CREATE TABLE IF NOT EXISTS builtin_user_emails (
 	PRIMARY KEY (id),
 	CONSTRAINT builtin_user_emails_uq_email UNIQUE  (email),
 	CONSTRAINT builtin_user_emails_ibfk_1 FOREIGN KEY (id) REFERENCES builtin_users (id)  ON DELETE CASCADE 
-)   ;
+);
 COMMENT ON TABLE builtin_user_emails IS '内置系统用户邮件';
