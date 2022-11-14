@@ -15,9 +15,8 @@ import plus.extvos.auth.entity.*;
 import plus.extvos.auth.enums.AuthCode;
 import plus.extvos.auth.mapper.*;
 import plus.extvos.auth.service.*;
-import plus.extvos.common.Validator;
-import plus.extvos.common.utils.QuickHash;
 import plus.extvos.common.Assert;
+import plus.extvos.common.Validator;
 import plus.extvos.common.exception.ResultException;
 
 import java.io.Serializable;
@@ -264,16 +263,12 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         log.debug("resolve:>>> {}, {} ", provider, openId);
         QueryWrapper<UserOpenAccount> qw = new QueryWrapper<>();
         qw.eq("provider", provider);
-        if (userId != null) {
-            qw.eq("user_id", userId);
-        } else {
-            qw.eq("open_id", openId);
-        }
+        qw.eq("open_id", openId);
         UserOpenAccount uwa = userOpenAccountMapper.selectOne(qw);
         if (null == uwa) {
             return null;
-        } else if (!uwa.getOpenId().equals(openId)) {
-            throw ResultException.conflict("user '" + userId + "' already linked with '" + uwa.getOpenId() + "'");
+        } else if (userId != null && !uwa.getUserId().equals(Long.parseLong(userId.toString()))) {
+            throw ResultException.conflict(provider + " user '" + openId + "' already linked with another user!");
         }
         User user = userMapper.selectById(uwa.getUserId());
         if (null == user) {
@@ -303,13 +298,10 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         qwu.eq("provider", provider);
         qwu.eq("open_id", openId);
         if (userOpenAccountMapper.selectCount(qwu) > 0) {
-            throw ResultException.conflict("open_id '" + openId + "' of '" + provider + "'already exists");
+            throw ResultException.conflict(provider + " user '" + openId + "' already exists");
         }
 
         User user = null;
-        if (username == null || username.isEmpty()) {
-            username = openId;
-        }
         // 手机可能已经存在了
         if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
             String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
@@ -319,47 +311,49 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
             }
         }
         if (user == null) {
+            Assert.notEmpty(username, ResultException.badRequest("username required"));
             qw.eq("username", username);
             user = userMapper.selectOne(qw);
         }
-        if (user == null) {
-            log.info("User {} not exists, register now ...", username);
-            user = new User();
-            String[] perms = null;
-            String[] roles = null;
-            short status = 0;
-//            user.setUsername(username);
-            password = password == null ? QuickHash.md5().hash(openId).hex() : password;
-//            user.setPassword(password == null ? QuickHash.md5().hash(openId).hex() : password);
-//            if (params != null) {
-//                user.setNickname(params.getOrDefault(OAuthProvider.NICK_NAME_KEY, openId).toString());
-//                user.setCellphone(params.getOrDefault(OAuthProvider.PHONE_NUMBER_KEY, "").toString());
+        Assert.notNull(user, ResultException.forbidden("user not exists"));
+//        if (user == null) {
+//            log.info("User {} not exists, register now ...", username);
+//            user = new User();
+//            String[] perms = null;
+//            String[] roles = null;
+//            short status = 0;
+////            user.setUsername(username);
+//            password = password == null ? QuickHash.md5().hash(openId).hex() : password;
+////            user.setPassword(password == null ? QuickHash.md5().hash(openId).hex() : password);
+////            if (params != null) {
+////                user.setNickname(params.getOrDefault(OAuthProvider.NICK_NAME_KEY, openId).toString());
+////                user.setCellphone(params.getOrDefault(OAuthProvider.PHONE_NUMBER_KEY, "").toString());
+////            }
+//            if (userRegisterHook != null) {
+//                if (!userRegisterHook.preRegister(username, password, params, UserRegisterHook.OAUTH)) {
+//                    throw ResultException.forbidden("not allowed to register user");
+//                }
+//                perms = userRegisterHook.defaultPermissions(UserRegisterHook.OAUTH);
+//                roles = userRegisterHook.defaultRoles(UserRegisterHook.OAUTH);
+//                status = userRegisterHook.defaultStatus(UserRegisterHook.OAUTH);
+//            } else {
+//                status = authConfig.getDefaultStatus();
 //            }
-            if (userRegisterHook != null) {
-                if (!userRegisterHook.preRegister(username, password, params, UserRegisterHook.OAUTH)) {
-                    throw ResultException.forbidden("not allowed to register user");
-                }
-                perms = userRegisterHook.defaultPermissions(UserRegisterHook.OAUTH);
-                roles = userRegisterHook.defaultRoles(UserRegisterHook.OAUTH);
-                status = userRegisterHook.defaultStatus(UserRegisterHook.OAUTH);
-            } else {
-                status = authConfig.getDefaultStatus();
-            }
-//            user.setStatus((short) 1);
-            Serializable userId = createUserInfo(username, password, status, perms, roles, params);
-//            userMapper.insert(user);
-//            if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
-//                String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
-//                userCellphoneMapper.insert(new UserCellphone(Long.parseLong(userId.toString()), cellphone));
+////            user.setStatus((short) 1);
+//            Serializable userId = createUserInfo(username, password, status, perms, roles, params);
+////            userMapper.insert(user);
+////            if (params != null && params.containsKey(OAuthProvider.PHONE_NUMBER_KEY) && Validator.notEmpty(params.get(OAuthProvider.PHONE_NUMBER_KEY).toString())) {
+////                String cellphone = params.get(OAuthProvider.PHONE_NUMBER_KEY).toString();
+////                userCellphoneMapper.insert(new UserCellphone(Long.parseLong(userId.toString()), cellphone));
+////            }
+//            user = userMapper.selectOne(qw);
+//            if (null == user) {
+//                throw ResultException.internalServerError("register user failed");
 //            }
-            user = userMapper.selectOne(qw);
-            if (null == user) {
-                throw ResultException.internalServerError("register user failed");
-            }
-            log.info("Created user {}, linking with {} now ...", username, openId);
-        } else {
-            log.info("User {} exists, linking with {} now ...", username, openId);
-        }
+//            log.info("Created user {}, linking with {} now ...", username, openId);
+//        } else {
+//            log.info("User {} exists, linking with {} now ...", username, openId);
+//        }
         UserOpenAccount uwa = new UserOpenAccount();
         uwa.setUserId(user.getId());
         uwa.setOpenId(openId);
