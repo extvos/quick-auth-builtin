@@ -258,7 +258,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
     }
 
     @Override
-    public OAuthInfo resolve(String provider, String openId, Serializable userId, Map<String, Object> params) throws
+    public OAuthInfo resolve(String provider, String openId, String unionId, Serializable userId, Map<String, Object> params) throws
             ResultException {
         log.debug("resolve:>>> {}, {} ", provider, openId);
         QueryWrapper<UserOpenAccount> qw = new QueryWrapper<>();
@@ -285,12 +285,12 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         extraInfo.put(OAuthProvider.CITY_KEY, uwa.getCity());
         extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
         extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
-        return new OAuthInfo(uwa.getId(), uwa.getUserId(), uwa.getProvider(), uwa.getOpenId(), extraInfo);
+        return new OAuthInfo(uwa.getId(), uwa.getUserId(), uwa.getProvider(), uwa.getOpenId(), unionId, extraInfo);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public OAuthInfo register(String provider, String openId, String username, String
+    public OAuthInfo register(String provider, String openId, String unionId, String username, String
             password, Map<String, Object> params) throws ResultException {
         QueryWrapper<User> qw = new QueryWrapper<>();
         Assert.notEmpty(openId, ResultException.badRequest("openId required"));
@@ -387,12 +387,12 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
         extraInfo.put(OAuthProvider.LANGUAGE_KEY, uwa.getLanguage());
         extraInfo.put(OAuthProvider.PHONE_NUMBER_KEY, cellphone);
 //        return new UserInfo(user.getId(), user.getUsername(), user.getPassword(), cellphone, extraInfo);
-        return new OAuthInfo(uwa.getId(), uwa.getUserId(), uwa.getProvider(), uwa.getOpenId(), extraInfo);
+        return new OAuthInfo(uwa.getId(), uwa.getUserId(), uwa.getProvider(), uwa.getOpenId(), null, extraInfo);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public OAuthInfo update(String provider, String openId, Serializable userId, Map<String, Object> params) throws ResultException {
+    public OAuthInfo update(String provider, String openId, String unionId, Serializable userId, Map<String, Object> params) throws ResultException {
         //Assert.equals(provider, WechatOAuthServiceProvider.SLUG, RestletException.badRequest("unknown provider: " + provider));
         Assert.notEmpty(openId, ResultException.badRequest("openId required"));
         Assert.notEmpty(params, ResultException.badRequest("params can not be empty"));
@@ -473,7 +473,7 @@ public class QuickAuthServiceImpl implements QuickAuthService, OpenIdResolver {
                 userCellphoneMapper.updateById(uc);
             }
         }
-        return resolve(provider, openId, userId, params);
+        return resolve(provider, openId, unionId, userId, params);
 //        return getUserById(uwa.getUserId(), false);
     }
 }
